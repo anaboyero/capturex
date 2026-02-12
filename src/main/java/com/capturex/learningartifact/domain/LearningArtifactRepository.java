@@ -1,5 +1,6 @@
 package com.capturex.learningartifact.domain;
 
-public interface LearningArtifactRepository {
-    LearningArtifact save(LearningArtifact learningArtifact);
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface LearningArtifactRepository extends JpaRepository<LearningArtifact, Long> {
 }
