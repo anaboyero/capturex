@@ -1,25 +1,21 @@
-Propósito del proyecto Capturex
+Capturex
 
-Implementar una vertical slice mínima de una API REST que permita crear un recurso mediante un endpoint POST.
+Minimal vertical-slice demo for creating a LearningArtifact via POST.
 
-El objetivo es practicar backend con una estructura simple, limpia y testeable, evitando complejidad innecesaria.
+Purpose
+- Demonstrate a small, testable backend flow: HTTP request → business logic → persistence.
 
-La slice debe cubrir el flujo completo: request HTTP → lógica de negocio → persistencia en base de datos.
+Key behavior
+- POST /learning-artifacts: accepts a JSON with `descripcion`, `leccionAprendida`, `url`.
+- Validates required fields and returns the created resource with generated `id`.
 
-Requisitos funcionales
+Tech
+- Java, JUnit 5, Mockito, Spring Data JPA, H2 (tests).
 
-Exponer un endpoint POST
+Run tests
+```bash
+mvn -U clean test
+```
 
-Recibir un objeto LearningArtifact con 3 campos:
-
-- descripcion
-
-- leccion
-
-- enlace
-
-Validar datos básicos
-
-Guardar el objeto en base de datos
-
-Devolver el objeto creado con su id
+Note
+- Ensure a JDK (javac) is installed and on PATH before running Maven.
