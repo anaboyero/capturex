@@ -15,14 +15,14 @@ public class CreateLearningArtifactService {
             throw new IllegalArgumentException("Request cannot be null");
         }
         
-        if (request.getDescripcion() == null || request.getDescripcion().isBlank()) {
+        if (request.getDescription() == null || request.getDescription().isBlank()) {
             throw new IllegalArgumentException("Descripcion cannot be blank");
         }
         
         LearningArtifact artifact = new LearningArtifact(
-                request.getDescripcion(),
-                request.getLeccionAprendida(),
-                request.getUrl()
+                request.getDescription(),
+                request.getInsight(),
+                request.getProjectUrl()
         );
         return repository.save(artifact);
     }

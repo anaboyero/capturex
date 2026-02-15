@@ -11,37 +11,37 @@ public class LearningArtifact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String descripcion;
-    private String leccionAprendida;
-    private String url;
+    private String description;
+    private String insight;
+    private String projectUrl;
 
-    public LearningArtifact(Long id, String descripcion, String leccionAprendida, String url) {
+    public LearningArtifact(Long id, String description, String insight, String projectUrl) {
         this.id = id;
-        this.descripcion = descripcion;
-        this.leccionAprendida = leccionAprendida;
-        this.url = url;
+        this.description = description;
+        this.insight = insight;
+        this.projectUrl = projectUrl;
     }
 
-    public LearningArtifact(String descripcion, String leccionAprendida, String url) {
-        this.descripcion = descripcion;
-        this.leccionAprendida = leccionAprendida;
-        this.url = url;
+    public LearningArtifact(String description, String insight, String projectUrl) {
+        this.description = description;
+        this.insight = insight;
+        this.projectUrl = projectUrl;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getDescription() {
+        return description;
     }
 
-    public String getLeccionAprendida() {
-        return leccionAprendida;
+    public String getInsight() {
+        return insight;
     }
 
-    public String getUrl() {
-        return url;
+    public String getProjectUrl() {
+        return projectUrl;
     }
 
     @Override
@@ -50,23 +50,23 @@ public class LearningArtifact {
         if (o == null || getClass() != o.getClass()) return false;
         LearningArtifact that = (LearningArtifact) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(descripcion, that.descripcion) &&
-                Objects.equals(leccionAprendida, that.leccionAprendida) &&
-                Objects.equals(url, that.url);
+                Objects.equals(description, that.description) &&
+                Objects.equals(insight, that.insight) &&
+                Objects.equals(projectUrl, that.projectUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, descripcion, leccionAprendida, url);
+        return Objects.hash(id, description, insight, projectUrl);
     }
 
     @Override
     public String toString() {
         return "LearningArtifact{" +
                 "id='" + id + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                ", leccionAprendida='" + leccionAprendida + '\'' +
-                ", url='" + url + '\'' +
+                ", description='" + description + '\'' +
+                ", insight='" + insight + '\'' +
+                ", projectUrl='" + projectUrl + '\'' +
                 '}';
     }
 }

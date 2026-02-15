@@ -3,26 +3,26 @@ package com.capturex.learningartifact.application;
 import java.util.Objects;
 
 public class CreateLearningArtifactRequest {
-    private String descripcion;
-    private String leccionAprendida;
-    private String url;
+    private String description;
+    private String insight;
+    private String projectUrl;
 
-    public CreateLearningArtifactRequest(String descripcion, String leccionAprendida, String url) {
-        this.descripcion = descripcion;
-        this.leccionAprendida = leccionAprendida;
-        this.url = url;
+    public CreateLearningArtifactRequest(String description, String insight, String url) {
+        this.description = description;
+        this.insight = insight;
+        this.projectUrl = url;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getDescription() {
+        return description;
     }
 
-    public String getLeccionAprendida() {
-        return leccionAprendida;
+    public String getInsight() {
+        return insight;
     }
 
-    public String getUrl() {
-        return url;
+    public String getProjectUrl() {
+        return projectUrl;
     }
 
     @Override
@@ -30,13 +30,13 @@ public class CreateLearningArtifactRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CreateLearningArtifactRequest that = (CreateLearningArtifactRequest) o;
-        return Objects.equals(descripcion, that.descripcion) &&
-                Objects.equals(leccionAprendida, that.leccionAprendida) &&
-                Objects.equals(url, that.url);
+        return Objects.equals(description, that.description) &&
+                Objects.equals(insight, that.insight) &&
+                Objects.equals(projectUrl, that.projectUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(descripcion, leccionAprendida, url);
+        return Objects.hash(description, insight, projectUrl);
     }
 }

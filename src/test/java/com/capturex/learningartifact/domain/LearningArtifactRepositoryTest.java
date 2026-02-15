@@ -20,14 +20,14 @@ class LearningArtifactRepositoryTest {
     @DisplayName("should_persist_learning_artifact")
     void should_persist_learning_artifact() {
         // Arrange
-        String descripcion = "Integration test artifact";
-        String leccionAprendida = "Learned about JPA persistence";
-        String url = "https://example.com/test";
+        String description = "Integration test artifact";
+        String insight = "Learned about JPA persistence";
+        String projectUrl = "https://example.com/test";
 
         LearningArtifact artifact = new LearningArtifact(
-                descripcion,
-                leccionAprendida,
-                url
+                description,
+                insight,
+                projectUrl
         );
 
         // Act
@@ -43,9 +43,9 @@ class LearningArtifactRepositoryTest {
         assertTrue(retrievedArtifact.isPresent(), "Artifact should be found by id");
 
         LearningArtifact foundArtifact = retrievedArtifact.get();
-        assertEquals(descripcion, foundArtifact.getDescripcion(), "Descripcion should match");
-        assertEquals(leccionAprendida, foundArtifact.getLeccionAprendida(), "LeccionAprendida should match");
-        assertEquals(url, foundArtifact.getUrl(), "Url should match");
+        assertEquals(description, foundArtifact.getDescription(), "Description should match");
+        assertEquals(insight, foundArtifact.getInsight(), "Insight should match");
+        assertEquals(projectUrl, foundArtifact.getProjectUrl(), "ProjectUrl should match");
         assertEquals(savedArtifact.getId(), foundArtifact.getId(), "Id should match");
     }
 }

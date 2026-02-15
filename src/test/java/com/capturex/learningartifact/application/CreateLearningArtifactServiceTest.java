@@ -27,22 +27,22 @@ class CreateLearningArtifactServiceTest {
     @DisplayName("should_create_learning_artifact_when_data_is_valid")
     void should_create_learning_artifact_when_data_is_valid() {
         // Arrange
-        String descripcion = "Test artifact description";
-        String leccionAprendida = "Important lesson learned";
-        String url = "https://example.com/artifact";
+        String description = "Test artifact description";
+        String insight = "Important lesson learned";
+        String projectUrl = "https://example.com/artifact";
         Long generatedId = 123L;
 
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-                descripcion,
-                leccionAprendida,
-                url
+                description,
+                insight,
+                projectUrl
         );
 
         LearningArtifact savedArtifact = new LearningArtifact(
                 generatedId,
-                descripcion,
-                leccionAprendida,
-                url
+                description,
+                insight,
+                projectUrl
         );
 
         when(repository.save(any(LearningArtifact.class))).thenReturn(savedArtifact);
@@ -56,9 +56,9 @@ class CreateLearningArtifactServiceTest {
 
         // Verify fields are copied correctly
         assertNotNull(result, "Result should not be null");
-        assertEquals(descripcion, result.getDescripcion(), "Descripcion should be copied correctly");
-        assertEquals(leccionAprendida, result.getLeccionAprendida(), "LeccionAprendida should be copied correctly");
-        assertEquals(url, result.getUrl(), "Url should be copied correctly");
+        assertEquals(description, result.getDescription(), "Description should be copied correctly");
+        assertEquals(insight, result.getInsight(), "Insight should be copied correctly");
+        assertEquals(projectUrl, result.getProjectUrl(), "ProjectUrl should be copied correctly");
 
         // Verify id is not null
         assertNotNull(result.getId(), "Id should not be null");
