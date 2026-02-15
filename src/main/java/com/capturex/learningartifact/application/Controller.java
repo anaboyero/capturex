@@ -44,7 +44,7 @@ public class Controller {
     }
 
     @DeleteMapping("/learning-artifacts/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         try {
             service.delete(id);
             return ResponseEntity.noContent().build();

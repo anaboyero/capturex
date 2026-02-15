@@ -14,6 +14,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import java.util.Arrays;
+import java.util.List;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import java.util.Arrays;
 import java.util.List;
@@ -191,6 +197,48 @@ class CreateLearningArtifactControllerIntegrationTest {
         // Act & Assert
         mockMvc.perform(
             get("/learning-artifacts")
+        )
+            .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("should return 204 No Content when delete is successful (integration)")
+    void shouldReturn204WhenDeleteSuccessfulIntegration() throws Exception {
+        // Arrange
+        Long id = 1L;
+        // service.delete does nothing for success
+
+        // Act & Assert
+        mockMvc.perform(
+            delete("/learning-artifacts/{id}", id)
+        )
+            .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("should return 404 Not Found when deleting non-existent artifact (integration)")
+    void shouldReturn404WhenDeleteNotFoundIntegration() throws Exception {
+        // Arrange
+        Long id = 2L;
+        doThrow(new IllegalArgumentException("LearningArtifact not found")).when(service).delete(id);
+
+        // Act & Assert
+        mockMvc.perform(
+            delete("/learning-artifacts/{id}", id)
+        )
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("should return 500 Internal Server Error when delete throws unexpected error (integration)")
+    void shouldReturn500WhenDeleteThrowsIntegration() throws Exception {
+        // Arrange
+        Long id = 3L;
+        doThrow(new RuntimeException("DB error on delete")).when(service).delete(id);
+
+        // Act & Assert
+        mockMvc.perform(
+            delete("/learning-artifacts/{id}", id)
         )
             .andExpect(status().isInternalServerError());
     }
