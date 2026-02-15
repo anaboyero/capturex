@@ -12,6 +12,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import java.util.Arrays;
+import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -155,6 +160,37 @@ class CreateLearningArtifactControllerIntegrationTest {
             post("/learning-artifacts")
                 .contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("should return 200 OK and list when getting all artifacts (integration)")
+    void shouldReturn200AndListWhenGetAllIntegration() throws Exception {
+        // Arrange
+        LearningArtifact a1 = new LearningArtifact("d1", "i1", "u1");
+        LearningArtifact a2 = new LearningArtifact("d2", "i2", "u2");
+        List<LearningArtifact> list = Arrays.asList(a1, a2);
+        when(service.getAll()).thenReturn(list);
+
+        // Act & Assert
+        mockMvc.perform(
+            get("/learning-artifacts")
+        )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].description", equalTo("d1")))
+            .andExpect(jsonPath("$[1].description", equalTo("d2")));
+    }
+
+    @Test
+    @DisplayName("should return 500 when unexpected error occurs on GET")
+    void shouldReturn500WhenGetAllThrows() throws Exception {
+        // Arrange
+        when(service.getAll()).thenThrow(new RuntimeException("Database error on getAll"));
+
+        // Act & Assert
+        mockMvc.perform(
+            get("/learning-artifacts")
         )
             .andExpect(status().isInternalServerError());
     }

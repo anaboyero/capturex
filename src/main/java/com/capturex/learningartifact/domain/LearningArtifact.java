@@ -15,6 +15,10 @@ public class LearningArtifact {
     private String insight;
     private String projectUrl;
 
+    protected LearningArtifact() {
+        // JPA requires a no-arg constructor
+    }
+
     public LearningArtifact(Long id, String description, String insight, String projectUrl) {
         this.id = id;
         this.description = description;
