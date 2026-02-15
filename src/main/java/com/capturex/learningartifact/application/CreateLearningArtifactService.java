@@ -2,8 +2,10 @@ package com.capturex.learningartifact.application;
 
 import com.capturex.learningartifact.domain.LearningArtifact;
 import com.capturex.learningartifact.domain.LearningArtifactRepository;
+import org.springframework.stereotype.Service;
 
-public class CreateLearningArtifactService {
+@Service
+public class CreateLearningArtifactService implements CreateLearningArtifactServiceInterface {
     private final LearningArtifactRepository repository;
 
     public CreateLearningArtifactService(LearningArtifactRepository repository) {

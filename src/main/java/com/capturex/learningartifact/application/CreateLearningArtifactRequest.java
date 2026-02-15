@@ -1,5 +1,7 @@
 package com.capturex.learningartifact.application;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class CreateLearningArtifactRequest {
@@ -7,10 +9,14 @@ public class CreateLearningArtifactRequest {
     private String insight;
     private String projectUrl;
 
-    public CreateLearningArtifactRequest(String description, String insight, String url) {
+    @JsonCreator
+    public CreateLearningArtifactRequest(
+            @JsonProperty("description") String description,
+            @JsonProperty("insight") String insight,
+            @JsonProperty("projectUrl") String projectUrl) {
         this.description = description;
         this.insight = insight;
-        this.projectUrl = url;
+        this.projectUrl = projectUrl;
     }
 
     public String getDescription() {
