@@ -3,6 +3,8 @@ package com.capturex.learningartifact.application;
 import com.capturex.learningartifact.domain.LearningArtifact;
 import com.capturex.learningartifact.domain.LearningArtifactRepository;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CreateLearningArtifactService implements CreateLearningArtifactServiceInterface {
@@ -27,5 +29,19 @@ public class CreateLearningArtifactService implements CreateLearningArtifactServ
                 request.getProjectUrl()
         );
         return repository.save(artifact);
+    }
+
+    public List<LearningArtifact> getAll() {
+        return repository.findAll();
+    }
+
+    public void delete(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        if (!repository.existsById(id)) {
+            throw new IllegalArgumentException("LearningArtifact not found");
+        }
+        repository.deleteById(id);
     }
 }

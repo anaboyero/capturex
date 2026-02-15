@@ -10,9 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.Arrays;
+import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 
 @DisplayName("Controller Unit Tests")
 class CreateLearningArtifactControllerTest {
@@ -131,5 +134,57 @@ class CreateLearningArtifactControllerTest {
         
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("should return 200 OK and list when getting all artifacts")
+    void shouldReturn200AndListWhenGetAll() {
+        // Arrange
+        LearningArtifact a1 = new LearningArtifact("d1", "i1", "u1");
+        LearningArtifact a2 = new LearningArtifact("d2", "i2", "u2");
+        List<LearningArtifact> list = Arrays.asList(a1, a2);
+        when(service.getAll()).thenReturn(list);
+
+        // Act
+        ResponseEntity<List<LearningArtifact>> result = controller.getAll();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(2, result.getBody().size());
+        assertEquals("d1", result.getBody().get(0).getDescription());
+        verify(service).getAll();
+    }
+
+    @Test
+    @DisplayName("should return 204 No Content when delete is successful")
+    void shouldReturn204WhenDeleteSuccessful() {
+        // Arrange
+        Long id = 1L;
+        // service.delete does nothing
+
+        // Act
+        ResponseEntity<Void> result = controller.delete(id);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+        verify(service).delete(id);
+    }
+
+    @Test
+    @DisplayName("should return 404 Not Found when deleting non-existent artifact")
+    void shouldReturn404WhenDeleteNotFound() {
+        // Arrange
+        Long id = 2L;
+        doThrow(new IllegalArgumentException("LearningArtifact not found")).when(service).delete(id);
+
+        // Act
+        ResponseEntity<Void> result = controller.delete(id);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        verify(service).delete(id);
     }
 }
