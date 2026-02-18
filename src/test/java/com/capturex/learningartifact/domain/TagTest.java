@@ -28,9 +28,9 @@ class TagTest {
 
     @Test 
     void should_have_underscore_instead_of_spaces() {
-        String input = "machine learning";
+        String input = "machine learning knowledge";
         Tag tag = new Tag(input);
-        assertThat(tag.value()).isEqualTo("machine_learning");
+        assertThat(tag.value()).isEqualTo("machine_learning_knowledge");
     }
 
 

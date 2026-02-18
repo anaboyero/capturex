@@ -1,7 +1,6 @@
 package com.capturex.learningartifact.domain;
 
-public class Tag {
-    private final String value;
+public record Tag (String value){
 
     public Tag(String value) {
         if (value == null || value.trim().isEmpty()) {
@@ -12,9 +11,5 @@ public class Tag {
             throw new IllegalArgumentException("La etiqueta no puede tener más de 50 caracteres");
         }
         this.value = normalized;
-    }
-
-    public String value() {
-        return value;
     }
 }
