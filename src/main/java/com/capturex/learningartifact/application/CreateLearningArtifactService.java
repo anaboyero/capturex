@@ -4,7 +4,6 @@ import com.capturex.learningartifact.domain.LearningArtifact;
 import com.capturex.learningartifact.domain.LearningArtifactRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CreateLearningArtifactService implements CreateLearningArtifactServiceInterface {
