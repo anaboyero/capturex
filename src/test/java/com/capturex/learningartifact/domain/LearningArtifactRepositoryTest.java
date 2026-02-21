@@ -17,7 +17,7 @@ class LearningArtifactRepositoryTest {
     private LearningArtifactRepository repository;
 
     @Test
-    @DisplayName("should_persist_learning_artifact")
+    @DisplayName("should_persist_correct_learning_artifact")
     void should_persist_learning_artifact() {
         // Arrange
         String description = "Integration test artifact";

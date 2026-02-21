@@ -1,6 +1,8 @@
 package com.capturex.learningartifact.application;
 
 import com.capturex.learningartifact.domain.LearningArtifact;
+import com.capturex.learningartifact.domain.exceptions.NullFieldException;
+import com.capturex.learningartifact.domain.exceptions.TooShortDescriptionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -47,14 +49,16 @@ class CreateLearningArtifactControllerTest {
             .thenReturn(expectedArtifact);
         
         // Act
-        ResponseEntity<LearningArtifact> result = controller.create(request);
+        ResponseEntity<?> result = controller.create(request);
         
         // Assert
         assertNotNull(result);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
-        assertEquals(description, result.getBody().getDescription());
-        assertEquals(insight, result.getBody().getInsight());
-        assertEquals(projectUrl, result.getBody().getProjectUrl());
+        assertInstanceOf(LearningArtifact.class, result.getBody());
+        LearningArtifact body = (LearningArtifact) result.getBody();
+        assertEquals(description, body.getDescription());
+        assertEquals(insight, body.getInsight());
+        assertEquals(projectUrl, body.getProjectUrl());
         verify(service).create(request);
     }
     
@@ -72,14 +76,16 @@ class CreateLearningArtifactControllerTest {
         when(service.create(request)).thenReturn(artifact);
         
         // Act
-        ResponseEntity<LearningArtifact> result = controller.create(request);
+        ResponseEntity<?> result = controller.create(request);
         
         // Assert
         assertNotNull(result);
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
-        assertEquals("Learning async patterns", result.getBody().getDescription());
-        assertEquals("Async/await simplifies code", result.getBody().getInsight());
-        assertEquals("https://github.com/example", result.getBody().getProjectUrl());
+        assertInstanceOf(LearningArtifact.class, result.getBody());
+        LearningArtifact body = (LearningArtifact) result.getBody();
+        assertEquals("Learning async patterns", body.getDescription());
+        assertEquals("Async/await simplifies code", body.getInsight());
+        assertEquals("https://github.com/example", body.getProjectUrl());
     }
     
     @Test
@@ -101,21 +107,47 @@ class CreateLearningArtifactControllerTest {
     }
     
     @Test
-    @DisplayName("should return 400 Bad Request when service throws IllegalArgumentException")
-    void shouldReturn400WhenIllegalArgumentException() {
+    @DisplayName("should return 400 Bad Request with error body when validation exception is thrown")
+    void shouldReturn400WhenValidationException() {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
             "", "Insight", "https://test.com"
         );
         
         when(service.create(request))
-            .thenThrow(new IllegalArgumentException("Descripcion cannot be blank"));
+            .thenThrow(new TooShortDescriptionException());
         
         // Act
-        ResponseEntity<LearningArtifact> result = controller.create(request);
+        ResponseEntity<?> result = controller.create(request);
         
         // Assert
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertInstanceOf(ErrorResponse.class, result.getBody());
+        ErrorResponse error = (ErrorResponse) result.getBody();
+        assertEquals("TOO_SHORT_DESCRIPTION", error.getCode());
+        assertEquals("Description must be at least 30 characters long", error.getMessage());
+    }
+
+    @Test
+    @DisplayName("should return 400 Bad Request with null field error body")
+    void shouldReturn400WhenNullFieldException() {
+        // Arrange
+        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
+            null, "Insight", "https://test.com"
+        );
+
+        when(service.create(request))
+            .thenThrow(new NullFieldException("description"));
+
+        // Act
+        ResponseEntity<?> result = controller.create(request);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertInstanceOf(ErrorResponse.class, result.getBody());
+        ErrorResponse error = (ErrorResponse) result.getBody();
+        assertEquals("NULL_FIELD", error.getCode());
+        assertEquals("description cannot be null", error.getMessage());
     }
     
     @Test
@@ -130,7 +162,7 @@ class CreateLearningArtifactControllerTest {
             .thenThrow(new RuntimeException("Database error"));
         
         // Act
-        ResponseEntity<LearningArtifact> result = controller.create(request);
+        ResponseEntity<?> result = controller.create(request);
         
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());

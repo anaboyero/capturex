@@ -1,6 +1,8 @@
 package com.capturex.learningartifact.application;
 
 import com.capturex.learningartifact.domain.LearningArtifact;
+import com.capturex.learningartifact.domain.exceptions.NullFieldException;
+import com.capturex.learningartifact.domain.exceptions.TooShortDescriptionException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -102,7 +104,7 @@ class CreateLearningArtifactControllerIntegrationTest {
         );
 
         when(service.create(any(CreateLearningArtifactRequest.class)))
-            .thenThrow(new IllegalArgumentException("Descripcion cannot be blank"));
+            .thenThrow(new TooShortDescriptionException());
 
         // Act & Assert
         mockMvc.perform(
@@ -110,7 +112,31 @@ class CreateLearningArtifactControllerIntegrationTest {
                 .contentType(APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
         )
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", equalTo("TOO_SHORT_DESCRIPTION")))
+            .andExpect(jsonPath("$.message", equalTo("Description must be at least 30 characters long")));
+    }
+
+    @Test
+    @DisplayName("should return 400 Bad Request with null field error body")
+    void shouldReturn400WithNullFieldErrorBody() throws Exception {
+        // Arrange
+        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
+            null, "Insight", "https://example.com"
+        );
+
+        when(service.create(any(CreateLearningArtifactRequest.class)))
+            .thenThrow(new NullFieldException("description"));
+
+        // Act & Assert
+        mockMvc.perform(
+            post("/learning-artifacts")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", equalTo("NULL_FIELD")))
+            .andExpect(jsonPath("$.message", equalTo("description cannot be null")));
     }
 
     @Test
