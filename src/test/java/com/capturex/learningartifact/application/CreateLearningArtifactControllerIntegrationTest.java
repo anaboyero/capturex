@@ -2,7 +2,6 @@ package com.capturex.learningartifact.application;
 
 import com.capturex.learningartifact.domain.LearningArtifact;
 import com.capturex.learningartifact.domain.exceptions.LearningArtifactNotFoundException;
-import com.capturex.learningartifact.domain.exceptions.NullFieldException;
 import com.capturex.learningartifact.domain.exceptions.TooShortDescriptionException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +29,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = LearningArtifactController.class)
 @DisplayName("CreateLearningArtifactControllerIntegration")
 class CreateLearningArtifactControllerIntegrationTest {
+    private static final String ENDPOINT = "/learning-artifacts";
+    private static final String VALID_DESCRIPTION =
+            "Basic controller that registers a learning artifact from a developer";
+    private static final String VALID_LESSON_LEARNED =
+            "How to work with an agent throught TDD to create a very simple vertical slice";
+    private static final String VALID_URL = "https://example.com";
+    private static final String GITHUB_URL = "https://github.com/example";
+    private static final String TEST_URL = "https://test.com";
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,53 +51,35 @@ class CreateLearningArtifactControllerIntegrationTest {
     @DisplayName("should return 201 Created when creating a learning artifact")
     void shouldReturn201CreatedWhenCreatingArtifact() throws Exception {
         // Arrange
-        String description = "Basic controller that registers a learning artifact from a developer";
-        String lessonLearned = "How to work with an agent throught TDD to create a very simple vertical slice";
-        String projectUrl = "https://example.com";
-        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            description, lessonLearned, projectUrl
-        );
+        CreateLearningArtifactRequest request = validRequest(VALID_URL);
+        LearningArtifact artifact = validArtifact(VALID_URL);
 
-        LearningArtifact artifact = new LearningArtifact(description, lessonLearned, projectUrl);
         when(service.create(any(CreateLearningArtifactRequest.class)))
             .thenReturn(artifact);
 
         // Act & Assert
-        mockMvc.perform(
-            post("/learning-artifacts")
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        )
+        postCreate(request)
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.description", equalTo(description)))
-            .andExpect(jsonPath("$.lessonLearned", equalTo(lessonLearned)))
-            .andExpect(jsonPath("$.projectUrl", equalTo(projectUrl)));
+            .andExpect(jsonPath("$.description", equalTo(VALID_DESCRIPTION)))
+            .andExpect(jsonPath("$.lessonLearned", equalTo(VALID_LESSON_LEARNED)))
+            .andExpect(jsonPath("$.projectUrl", equalTo(VALID_URL)));
     }
 
     @Test
     @DisplayName("should return artifact data in response body")
     void shouldReturnArtifactDataInResponseBody() throws Exception {
         // Arrange
-        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "Basic controller that registers a learning artifact from a developer", "How to work with an agent throught TDD to create a very simple vertical slice", "https://github.com/example"
-        );
-
-        LearningArtifact artifact = new LearningArtifact(
-            "Basic controller that registers a learning artifact from a developer", "How to work with an agent throught TDD to create a very simple vertical slice", "https://github.com/example"
-        );
+        CreateLearningArtifactRequest request = validRequest(GITHUB_URL);
+        LearningArtifact artifact = validArtifact(GITHUB_URL);
         when(service.create(any(CreateLearningArtifactRequest.class)))
             .thenReturn(artifact);
 
         // Act & Assert
-        mockMvc.perform(
-            post("/learning-artifacts")
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        )
+        postCreate(request)
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.description", equalTo("Basic controller that registers a learning artifact from a developer")))
-            .andExpect(jsonPath("$.lessonLearned", equalTo("How to work with an agent throught TDD to create a very simple vertical slice")))
-            .andExpect(jsonPath("$.projectUrl", equalTo("https://github.com/example")));
+            .andExpect(jsonPath("$.description", equalTo(VALID_DESCRIPTION)))
+            .andExpect(jsonPath("$.lessonLearned", equalTo(VALID_LESSON_LEARNED)))
+            .andExpect(jsonPath("$.projectUrl", equalTo(GITHUB_URL)));
     }
 
     @Test
@@ -97,15 +87,11 @@ class CreateLearningArtifactControllerIntegrationTest {
     void shouldReturn400AutomaticallyWhenRequestViolatesBeanValidation() throws Exception {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "", "LessonLearned", "https://example.com"
+            "", "LessonLearned", VALID_URL
         );
 
         // Act & Assert
-        mockMvc.perform(
-            post("/learning-artifacts")
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        )
+        postCreate(request)
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")))
             .andExpect(jsonPath("$.message").isString());
@@ -118,15 +104,11 @@ class CreateLearningArtifactControllerIntegrationTest {
     void shouldReturn400AutomaticallyWhenRequestHasNullFields() throws Exception {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            null, "LessonLearned", "https://example.com"
+            null, "LessonLearned", VALID_URL
         );
 
         // Act & Assert
-        mockMvc.perform(
-            post("/learning-artifacts")
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        )
+        postCreate(request)
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")))
             .andExpect(jsonPath("$.message").isString());
@@ -139,7 +121,7 @@ class CreateLearningArtifactControllerIntegrationTest {
     void shouldReturn400WhenRequestIsNull() throws Exception {
         // Act & Assert
         mockMvc.perform(
-            post("/learning-artifacts")
+            post(ENDPOINT)
                 .contentType(APPLICATION_JSON)
                 .content("{}")
         )
@@ -163,11 +145,7 @@ class CreateLearningArtifactControllerIntegrationTest {
             .thenThrow(new TooShortDescriptionException());
 
         // Act & Assert
-        mockMvc.perform(
-            post("/learning-artifacts")
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        )
+        postCreate(request)
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code", equalTo("TOO_SHORT_DESCRIPTION")))
             .andExpect(jsonPath("$.message", equalTo("Description must be at least 30 characters long")));
@@ -177,20 +155,14 @@ class CreateLearningArtifactControllerIntegrationTest {
     @DisplayName("should accept POST request at /learning-artifacts endpoint")
     void shouldAcceptPostRequestAtLearningArtifactsEndpoint() throws Exception {
         // Arrange
-        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "Basic controller that registers a learning artifact from a developer", "How to work with an agent throught TDD to create a very simple vertical slice", "https://test.com"
-        );
+        CreateLearningArtifactRequest request = validRequest(TEST_URL);
 
-        LearningArtifact artifact = new LearningArtifact("Test", "LessonLearned", "https://test.com");
+        LearningArtifact artifact = validArtifact(TEST_URL);
         when(service.create(any(CreateLearningArtifactRequest.class)))
             .thenReturn(artifact);
 
         // Act & Assert
-        mockMvc.perform(
-            post("/learning-artifacts")
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        )
+        postCreate(request)
             .andExpect(status().isCreated());
     }
 
@@ -198,19 +170,13 @@ class CreateLearningArtifactControllerIntegrationTest {
     @DisplayName("should return 500 when unexpected error occurs")
     void shouldReturn500WhenUnexpectedErrorOccurs() throws Exception {
         // Arrange
-        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "Basic controller that registers a learning artifact from a developer", "How to work with an agent throught TDD to create a very simple vertical slice", "https://test.com"
-        );
+        CreateLearningArtifactRequest request = validRequest(TEST_URL);
 
         when(service.create(any(CreateLearningArtifactRequest.class)))
             .thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
-        mockMvc.perform(
-            post("/learning-artifacts")
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        )
+        postCreate(request)
             .andExpect(status().isInternalServerError());
     }
 
@@ -225,7 +191,7 @@ class CreateLearningArtifactControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(
-            get("/learning-artifacts")
+            get(ENDPOINT)
         )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].description", equalTo("d1")))
@@ -240,7 +206,7 @@ class CreateLearningArtifactControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(
-            get("/learning-artifacts")
+            get(ENDPOINT)
         )
             .andExpect(status().isInternalServerError());
     }
@@ -254,7 +220,7 @@ class CreateLearningArtifactControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(
-            delete("/learning-artifacts/{id}", id)
+            delete(ENDPOINT + "/{id}", id)
         )
             .andExpect(status().isNoContent());
     }
@@ -268,7 +234,7 @@ class CreateLearningArtifactControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(
-            delete("/learning-artifacts/{id}", id)
+            delete(ENDPOINT + "/{id}", id)
         )
             .andExpect(status().isNotFound());
     }
@@ -282,8 +248,24 @@ class CreateLearningArtifactControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(
-            delete("/learning-artifacts/{id}", id)
+            delete(ENDPOINT + "/{id}", id)
         )
             .andExpect(status().isInternalServerError());
+    }
+
+    private CreateLearningArtifactRequest validRequest(String projectUrl) {
+        return new CreateLearningArtifactRequest(VALID_DESCRIPTION, VALID_LESSON_LEARNED, projectUrl);
+    }
+
+    private LearningArtifact validArtifact(String projectUrl) {
+        return new LearningArtifact(VALID_DESCRIPTION, VALID_LESSON_LEARNED, projectUrl);
+    }
+
+    private ResultActions postCreate(CreateLearningArtifactRequest request) throws Exception {
+        return mockMvc.perform(
+                post(ENDPOINT)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        );
     }
 }
