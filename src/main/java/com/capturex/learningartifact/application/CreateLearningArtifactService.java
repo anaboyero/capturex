@@ -3,6 +3,7 @@ package com.capturex.learningartifact.application;
 import com.capturex.learningartifact.domain.LearningArtifact;
 import com.capturex.learningartifact.domain.LearningArtifactRepository;
 import com.capturex.learningartifact.domain.exceptions.EmptyLessonLearnedException;
+import com.capturex.learningartifact.domain.exceptions.LearningArtifactNotFoundException;
 import com.capturex.learningartifact.domain.exceptions.NotValidURLException;
 import com.capturex.learningartifact.domain.exceptions.NullFieldException;
 import com.capturex.learningartifact.domain.exceptions.TooShortDescriptionException;
@@ -82,7 +83,7 @@ public class CreateLearningArtifactService implements CreateLearningArtifactServ
             throw new IllegalArgumentException("Id cannot be null");
         }
         if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("LearningArtifact not found");
+            throw new LearningArtifactNotFoundException(id);
         }
         repository.deleteById(id);
     }

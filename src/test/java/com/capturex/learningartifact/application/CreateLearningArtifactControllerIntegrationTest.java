@@ -1,6 +1,7 @@
 package com.capturex.learningartifact.application;
 
 import com.capturex.learningartifact.domain.LearningArtifact;
+import com.capturex.learningartifact.domain.exceptions.LearningArtifactNotFoundException;
 import com.capturex.learningartifact.domain.exceptions.NullFieldException;
 import com.capturex.learningartifact.domain.exceptions.TooShortDescriptionException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -246,7 +247,7 @@ class CreateLearningArtifactControllerIntegrationTest {
     void shouldReturn404WhenDeleteNotFoundIntegration() throws Exception {
         // Arrange
         Long id = 2L;
-        doThrow(new IllegalArgumentException("LearningArtifact not found")).when(service).delete(id);
+        doThrow(new LearningArtifactNotFoundException(id)).when(service).delete(id);
 
         // Act & Assert
         mockMvc.perform(

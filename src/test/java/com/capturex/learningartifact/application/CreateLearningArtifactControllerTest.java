@@ -1,6 +1,7 @@
 package com.capturex.learningartifact.application;
 
 import com.capturex.learningartifact.domain.LearningArtifact;
+import com.capturex.learningartifact.domain.exceptions.LearningArtifactNotFoundException;
 import com.capturex.learningartifact.domain.exceptions.NullFieldException;
 import com.capturex.learningartifact.domain.exceptions.TooShortDescriptionException;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,8 +108,8 @@ class CreateLearningArtifactControllerTest {
     }
     
     @Test
-    @DisplayName("should return 400 Bad Request with error body when validation exception is thrown")
-    void shouldReturn400WhenValidationException() {
+    @DisplayName("should throw validation exception when service fails validation")
+    void shouldThrowValidationException() {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
             "", "Insight", "https://test.com"
@@ -117,20 +118,13 @@ class CreateLearningArtifactControllerTest {
         when(service.create(request))
             .thenThrow(new TooShortDescriptionException());
         
-        // Act
-        ResponseEntity<?> result = controller.create(request);
-        
-        // Assert
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        assertInstanceOf(ErrorResponse.class, result.getBody());
-        ErrorResponse error = (ErrorResponse) result.getBody();
-        assertEquals("TOO_SHORT_DESCRIPTION", error.getCode());
-        assertEquals("Description must be at least 30 characters long", error.getMessage());
+        // Act & Assert
+        assertThrows(TooShortDescriptionException.class, () -> controller.create(request));
     }
 
     @Test
-    @DisplayName("should return 400 Bad Request with null field error body")
-    void shouldReturn400WhenNullFieldException() {
+    @DisplayName("should throw null field exception when service detects null field")
+    void shouldThrowNullFieldException() {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
             null, "Insight", "https://test.com"
@@ -139,20 +133,13 @@ class CreateLearningArtifactControllerTest {
         when(service.create(request))
             .thenThrow(new NullFieldException("description"));
 
-        // Act
-        ResponseEntity<?> result = controller.create(request);
-
-        // Assert
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        assertInstanceOf(ErrorResponse.class, result.getBody());
-        ErrorResponse error = (ErrorResponse) result.getBody();
-        assertEquals("NULL_FIELD", error.getCode());
-        assertEquals("description cannot be null", error.getMessage());
+        // Act & Assert
+        assertThrows(NullFieldException.class, () -> controller.create(request));
     }
     
     @Test
-    @DisplayName("should return 500 Internal Server Error when unexpected exception occurs")
-    void shouldReturn500WhenRuntimeException() {
+    @DisplayName("should throw runtime exception when unexpected exception occurs")
+    void shouldThrowRuntimeException() {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
             "Test", "Insight", "https://test.com"
@@ -161,11 +148,8 @@ class CreateLearningArtifactControllerTest {
         when(service.create(request))
             .thenThrow(new RuntimeException("Database error"));
         
-        // Act
-        ResponseEntity<?> result = controller.create(request);
-        
-        // Assert
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> controller.create(request));
     }
 
     @Test
@@ -205,18 +189,14 @@ class CreateLearningArtifactControllerTest {
     }
 
     @Test
-    @DisplayName("should return 404 Not Found when deleting non-existent artifact")
-    void shouldReturn404WhenDeleteNotFound() {
+    @DisplayName("should throw exception when deleting non-existent artifact")
+    void shouldThrowWhenDeleteNotFound() {
         // Arrange
         Long id = 2L;
-        doThrow(new IllegalArgumentException("LearningArtifact not found")).when(service).delete(id);
+        doThrow(new LearningArtifactNotFoundException(id)).when(service).delete(id);
 
-        // Act
-        ResponseEntity<Void> result = controller.delete(id);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        // Act & Assert
+        assertThrows(LearningArtifactNotFoundException.class, () -> controller.delete(id));
         verify(service).delete(id);
     }
 }
