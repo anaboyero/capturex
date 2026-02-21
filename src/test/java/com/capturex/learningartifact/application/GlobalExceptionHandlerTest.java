@@ -23,7 +23,7 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("TOO_SHORT_DESCRIPTION", response.getBody().getCode());
+        assertEquals(ErrorResponseCode.TOO_SHORT_DESCRIPTION, response.getBody().getCode());
     }
 
     @Test
@@ -33,7 +33,7 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("NULL_FIELD", response.getBody().getCode());
+        assertEquals(ErrorResponseCode.NULL_FIELD, response.getBody().getCode());
         assertEquals("description cannot be null", response.getBody().getMessage());
     }
 
@@ -54,7 +54,7 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("INVALID_REQUEST", response.getBody().getCode());
+        assertEquals(ErrorResponseCode.INVALID_REQUEST, response.getBody().getCode());
     }
 
     @Test

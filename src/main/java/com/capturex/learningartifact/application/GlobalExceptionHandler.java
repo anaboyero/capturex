@@ -1,6 +1,7 @@
 package com.capturex.learningartifact.application;
 
 import com.capturex.learningartifact.domain.exceptions.CapturexException;
+import com.capturex.learningartifact.domain.exceptions.ErrorCode;
 import com.capturex.learningartifact.domain.exceptions.LearningArtifactNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CapturexException.class)
     public ResponseEntity<ErrorResponse> handleCapturexException(CapturexException exception) {
-        ErrorResponse response = new ErrorResponse(exception.getErrorCode().name(), exception.getMessage());
+        ErrorResponse response = new ErrorResponse(mapDomainErrorCode(exception.getErrorCode()), exception.getMessage());
         return ResponseEntity.badRequest().body(response);
     }
 
@@ -24,7 +25,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException exception) {
-        ErrorResponse response = new ErrorResponse("INVALID_REQUEST", exception.getMessage());
+        ErrorResponse response = new ErrorResponse(ErrorResponseCode.INVALID_REQUEST, exception.getMessage());
         return ResponseEntity.badRequest().body(response);
     }
 
@@ -39,12 +40,22 @@ public class GlobalExceptionHandler {
                         : error.getDefaultMessage())
                 .orElse("Request validation failed");
 
-        ErrorResponse response = new ErrorResponse("INVALID_REQUEST", message);
+        ErrorResponse response = new ErrorResponse(ErrorResponseCode.INVALID_REQUEST, message);
         return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Void> handleRuntimeException(RuntimeException exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    private ErrorResponseCode mapDomainErrorCode(ErrorCode domainCode) {
+        return switch (domainCode) {
+            case TOO_SHORT_DESCRIPTION -> ErrorResponseCode.TOO_SHORT_DESCRIPTION;
+            case EMPTY_LESSON_LEARNED -> ErrorResponseCode.EMPTY_LESSON_LEARNED;
+            case NOT_VALID_URL -> ErrorResponseCode.NOT_VALID_URL;
+            case NULL_FIELD -> ErrorResponseCode.NULL_FIELD;
+            case VALIDATION_ERROR -> ErrorResponseCode.VALIDATION_ERROR;
+        };
     }
 }

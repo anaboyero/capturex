@@ -1,15 +1,15 @@
 package com.capturex.learningartifact.application;
 
 public class ErrorResponse {
-    private final String code;
+    private final ErrorResponseCode code;
     private final String message;
 
-    public ErrorResponse(String code, String message) {
+    public ErrorResponse(ErrorResponseCode code, String message) {
         this.code = code;
         this.message = message;
     }
 
-    public String getCode() {
+    public ErrorResponseCode getCode() {
         return code;
     }
 
