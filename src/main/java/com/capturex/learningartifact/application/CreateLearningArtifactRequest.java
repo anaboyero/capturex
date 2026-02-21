@@ -2,11 +2,26 @@ package com.capturex.learningartifact.application;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 import java.util.Objects;
 
 public class CreateLearningArtifactRequest {
+    @NotBlank(message = "description must not be blank")
+    @Size(min = 30, max = 500, message = "description must be between 30 and 500 characters")
     private String description;
+
+    @NotBlank(message = "insight must not be blank")
+    @Size(min = 10, message = "insight must be at least 10 characters")
     private String insight;
+
+    @NotBlank(message = "projectUrl must not be blank")
+    @Pattern(
+            regexp = "^(https?://).+",
+            message = "projectUrl must be a valid URL starting with http:// or https://"
+    )
     private String projectUrl;
 
     @JsonCreator

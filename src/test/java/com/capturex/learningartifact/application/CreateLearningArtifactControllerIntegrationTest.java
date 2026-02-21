@@ -12,21 +12,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import java.util.Arrays;
-import java.util.List;
-import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import java.util.Arrays;
-import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -47,8 +43,8 @@ class CreateLearningArtifactControllerIntegrationTest {
     @DisplayName("should return 201 Created when creating a learning artifact")
     void shouldReturn201CreatedWhenCreatingArtifact() throws Exception {
         // Arrange
-        String description = "Test description";
-        String insight = "Test insight";
+        String description = "Basic controller that registers a learning artifact from a developer";
+        String insight = "How to work with an agent throught TDD to create a very simple vertical slice";
         String projectUrl = "https://example.com";
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
             description, insight, projectUrl
@@ -75,11 +71,11 @@ class CreateLearningArtifactControllerIntegrationTest {
     void shouldReturnArtifactDataInResponseBody() throws Exception {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "Learning patterns", "Design patterns improve code", "https://github.com/example"
+            "Basic controller that registers a learning artifact from a developer", "How to work with an agent throught TDD to create a very simple vertical slice", "https://github.com/example"
         );
 
         LearningArtifact artifact = new LearningArtifact(
-            "Learning patterns", "Design patterns improve code", "https://github.com/example"
+            "Basic controller that registers a learning artifact from a developer", "How to work with an agent throught TDD to create a very simple vertical slice", "https://github.com/example"
         );
         when(service.create(any(CreateLearningArtifactRequest.class)))
             .thenReturn(artifact);
@@ -91,17 +87,76 @@ class CreateLearningArtifactControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(request))
         )
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.description", equalTo("Learning patterns")))
-            .andExpect(jsonPath("$.insight", equalTo("Design patterns improve code")))
+            .andExpect(jsonPath("$.description", equalTo("Basic controller that registers a learning artifact from a developer")))
+            .andExpect(jsonPath("$.insight", equalTo("How to work with an agent throught TDD to create a very simple vertical slice")))
             .andExpect(jsonPath("$.projectUrl", equalTo("https://github.com/example")));
     }
 
     @Test
-    @DisplayName("should return 400 Bad Request when description is blank")
-    void shouldReturn400WhenDescriptionIsBlank() throws Exception {
+    @DisplayName("should return 400 Bad Request automatically when request violates bean validation")
+    void shouldReturn400AutomaticallyWhenRequestViolatesBeanValidation() throws Exception {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
             "", "Insight", "https://example.com"
+        );
+
+        // Act & Assert
+        mockMvc.perform(
+            post("/learning-artifacts")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")))
+            .andExpect(jsonPath("$.message").isString());
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @DisplayName("should return 400 Bad Request automatically when request has null fields")
+    void shouldReturn400AutomaticallyWhenRequestHasNullFields() throws Exception {
+        // Arrange
+        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
+            null, "Insight", "https://example.com"
+        );
+
+        // Act & Assert
+        mockMvc.perform(
+            post("/learning-artifacts")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")))
+            .andExpect(jsonPath("$.message").isString());
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @DisplayName("should return 400 Bad Request when request body misses required fields")
+    void shouldReturn400WhenRequestIsNull() throws Exception {
+        // Act & Assert
+        mockMvc.perform(
+            post("/learning-artifacts")
+                .contentType(APPLICATION_JSON)
+                .content("{}")
+        )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")));
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @DisplayName("should return 400 with domain validation error when service throws CapturexException")
+    void shouldReturn400WhenServiceThrowsDomainValidationException() throws Exception {
+        // Arrange
+        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
+            "This is a valid artifact description for tests",
+            "Important lesson learned",
+            "https://example.com/artifact"
         );
 
         when(service.create(any(CreateLearningArtifactRequest.class)))
@@ -119,49 +174,11 @@ class CreateLearningArtifactControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("should return 400 Bad Request with null field error body")
-    void shouldReturn400WithNullFieldErrorBody() throws Exception {
-        // Arrange
-        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            null, "Insight", "https://example.com"
-        );
-
-        when(service.create(any(CreateLearningArtifactRequest.class)))
-            .thenThrow(new NullFieldException("description"));
-
-        // Act & Assert
-        mockMvc.perform(
-            post("/learning-artifacts")
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
-        )
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code", equalTo("NULL_FIELD")))
-            .andExpect(jsonPath("$.message", equalTo("description cannot be null")));
-    }
-
-    @Test
-    @DisplayName("should return 400 Bad Request when request is null")
-    void shouldReturn400WhenRequestIsNull() throws Exception {
-        // Arrange
-        when(service.create(any(CreateLearningArtifactRequest.class)))
-            .thenThrow(new IllegalArgumentException("Request cannot be null"));
-
-        // Act & Assert
-        mockMvc.perform(
-            post("/learning-artifacts")
-                .contentType(APPLICATION_JSON)
-                .content("{}")
-        )
-            .andExpect(status().isBadRequest());
-    }
-
-    @Test
     @DisplayName("should accept POST request at /learning-artifacts endpoint")
     void shouldAcceptPostRequestAtLearningArtifactsEndpoint() throws Exception {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "Test", "Insight", "https://test.com"
+            "Basic controller that registers a learning artifact from a developer", "How to work with an agent throught TDD to create a very simple vertical slice", "https://test.com"
         );
 
         LearningArtifact artifact = new LearningArtifact("Test", "Insight", "https://test.com");
@@ -182,7 +199,7 @@ class CreateLearningArtifactControllerIntegrationTest {
     void shouldReturn500WhenUnexpectedErrorOccurs() throws Exception {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "Test", "Insight", "https://test.com"
+            "Basic controller that registers a learning artifact from a developer", "How to work with an agent throught TDD to create a very simple vertical slice", "https://test.com"
         );
 
         when(service.create(any(CreateLearningArtifactRequest.class)))

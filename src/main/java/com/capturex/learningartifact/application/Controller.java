@@ -1,6 +1,7 @@
 package com.capturex.learningartifact.application;
 
 import com.capturex.learningartifact.domain.LearningArtifact;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +23,7 @@ public class Controller {
     }
     
     @PostMapping("/learning-artifacts")
-    public ResponseEntity<LearningArtifact> create(@RequestBody CreateLearningArtifactRequest request) {
+    public ResponseEntity<LearningArtifact> create(@Valid @RequestBody CreateLearningArtifactRequest request) {
         LearningArtifact artifact = service.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(artifact);
     }
