@@ -32,20 +32,20 @@ class CreateLearningArtifactServiceTest {
     void should_create_learning_artifact_when_data_is_valid() {
         // Arrange
         String description = "This is a valid artifact description for tests";
-        String insight = "Important lesson learned";
+        String lessonLearned = "Important lesson learned";
         String projectUrl = "https://example.com/artifact";
         Long generatedId = 123L;
 
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
                 description,
-                insight,
+                lessonLearned,
                 projectUrl
         );
 
         LearningArtifact savedArtifact = new LearningArtifact(
                 generatedId,
                 description,
-                insight,
+                lessonLearned,
                 projectUrl
         );
 
@@ -61,7 +61,7 @@ class CreateLearningArtifactServiceTest {
         // Verify fields are copied correctly
         assertNotNull(result, "Result should not be null");
         assertEquals(description, result.getDescription(), "Description should be copied correctly");
-        assertEquals(insight, result.getInsight(), "Insight should be copied correctly");
+        assertEquals(lessonLearned, result.getLessonLearned(), "LessonLearned should be copied correctly");
         assertEquals(projectUrl, result.getProjectUrl(), "ProjectUrl should be copied correctly");
 
         // Verify id is not null
@@ -99,7 +99,7 @@ class CreateLearningArtifactServiceTest {
 
         // Act & Assert
         assertThrows(EmptyLessonLearnedException.class, () -> service.create(request),
-                "Should throw EmptyLessonLearnedException when insight is empty");
+                "Should throw EmptyLessonLearnedException when lessonLearned is empty");
 
         // Verify repository.save was NOT called
         verify(repository, never()).save(any(LearningArtifact.class));
@@ -132,7 +132,7 @@ class CreateLearningArtifactServiceTest {
                 "Important lesson learned",
                 "https://example.com/artifact"
         );
-        CreateLearningArtifactRequest nullInsight = new CreateLearningArtifactRequest(
+        CreateLearningArtifactRequest nullLessonLearned = new CreateLearningArtifactRequest(
                 "This is a valid artifact description for tests",
                 null,
                 "https://example.com/artifact"
@@ -146,8 +146,8 @@ class CreateLearningArtifactServiceTest {
         // Act & Assert
         assertThrows(NullFieldException.class, () -> service.create(nullDescription),
                 "Should throw NullFieldException when description is null");
-        assertThrows(NullFieldException.class, () -> service.create(nullInsight),
-                "Should throw NullFieldException when insight is null");
+        assertThrows(NullFieldException.class, () -> service.create(nullLessonLearned),
+                "Should throw NullFieldException when lessonLearned is null");
         assertThrows(NullFieldException.class, () -> service.create(nullProjectUrl),
                 "Should throw NullFieldException when projectUrl is null");
 

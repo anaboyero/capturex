@@ -13,9 +13,9 @@ public class CreateLearningArtifactRequest {
     @Size(min = 30, max = 500, message = "description must be between 30 and 500 characters")
     private String description;
 
-    @NotBlank(message = "insight must not be blank")
-    @Size(min = 10, message = "insight must be at least 10 characters")
-    private String insight;
+    @NotBlank(message = "lessonLearned must not be blank")
+    @Size(min = 10, message = "lessonLearned must be at least 10 characters")
+    private String lessonLearned;
 
     @NotBlank(message = "projectUrl must not be blank")
     @Pattern(
@@ -27,10 +27,10 @@ public class CreateLearningArtifactRequest {
     @JsonCreator
     public CreateLearningArtifactRequest(
             @JsonProperty("description") String description,
-            @JsonProperty("insight") String insight,
+            @JsonProperty("lessonLearned") String lessonLearned,
             @JsonProperty("projectUrl") String projectUrl) {
         this.description = description;
-        this.insight = insight;
+        this.lessonLearned = lessonLearned;
         this.projectUrl = projectUrl;
     }
 
@@ -38,8 +38,8 @@ public class CreateLearningArtifactRequest {
         return description;
     }
 
-    public String getInsight() {
-        return insight;
+    public String getLessonLearned() {
+        return lessonLearned;
     }
 
     public String getProjectUrl() {
@@ -52,12 +52,12 @@ public class CreateLearningArtifactRequest {
         if (o == null || getClass() != o.getClass()) return false;
         CreateLearningArtifactRequest that = (CreateLearningArtifactRequest) o;
         return Objects.equals(description, that.description) &&
-                Objects.equals(insight, that.insight) &&
+                Objects.equals(lessonLearned, that.lessonLearned) &&
                 Objects.equals(projectUrl, that.projectUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(description, insight, projectUrl);
+        return Objects.hash(description, lessonLearned, projectUrl);
     }
 }

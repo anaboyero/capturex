@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = Controller.class)
+@WebMvcTest(controllers = LearningArtifactController.class)
 @DisplayName("CreateLearningArtifactControllerIntegration")
 class CreateLearningArtifactControllerIntegrationTest {
 
@@ -44,13 +44,13 @@ class CreateLearningArtifactControllerIntegrationTest {
     void shouldReturn201CreatedWhenCreatingArtifact() throws Exception {
         // Arrange
         String description = "Basic controller that registers a learning artifact from a developer";
-        String insight = "How to work with an agent throught TDD to create a very simple vertical slice";
+        String lessonLearned = "How to work with an agent throught TDD to create a very simple vertical slice";
         String projectUrl = "https://example.com";
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            description, insight, projectUrl
+            description, lessonLearned, projectUrl
         );
 
-        LearningArtifact artifact = new LearningArtifact(description, insight, projectUrl);
+        LearningArtifact artifact = new LearningArtifact(description, lessonLearned, projectUrl);
         when(service.create(any(CreateLearningArtifactRequest.class)))
             .thenReturn(artifact);
 
@@ -62,7 +62,7 @@ class CreateLearningArtifactControllerIntegrationTest {
         )
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.description", equalTo(description)))
-            .andExpect(jsonPath("$.insight", equalTo(insight)))
+            .andExpect(jsonPath("$.lessonLearned", equalTo(lessonLearned)))
             .andExpect(jsonPath("$.projectUrl", equalTo(projectUrl)));
     }
 
@@ -88,7 +88,7 @@ class CreateLearningArtifactControllerIntegrationTest {
         )
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.description", equalTo("Basic controller that registers a learning artifact from a developer")))
-            .andExpect(jsonPath("$.insight", equalTo("How to work with an agent throught TDD to create a very simple vertical slice")))
+            .andExpect(jsonPath("$.lessonLearned", equalTo("How to work with an agent throught TDD to create a very simple vertical slice")))
             .andExpect(jsonPath("$.projectUrl", equalTo("https://github.com/example")));
     }
 
@@ -97,7 +97,7 @@ class CreateLearningArtifactControllerIntegrationTest {
     void shouldReturn400AutomaticallyWhenRequestViolatesBeanValidation() throws Exception {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "", "Insight", "https://example.com"
+            "", "LessonLearned", "https://example.com"
         );
 
         // Act & Assert
@@ -118,7 +118,7 @@ class CreateLearningArtifactControllerIntegrationTest {
     void shouldReturn400AutomaticallyWhenRequestHasNullFields() throws Exception {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            null, "Insight", "https://example.com"
+            null, "LessonLearned", "https://example.com"
         );
 
         // Act & Assert
@@ -181,7 +181,7 @@ class CreateLearningArtifactControllerIntegrationTest {
             "Basic controller that registers a learning artifact from a developer", "How to work with an agent throught TDD to create a very simple vertical slice", "https://test.com"
         );
 
-        LearningArtifact artifact = new LearningArtifact("Test", "Insight", "https://test.com");
+        LearningArtifact artifact = new LearningArtifact("Test", "LessonLearned", "https://test.com");
         when(service.create(any(CreateLearningArtifactRequest.class)))
             .thenReturn(artifact);
 

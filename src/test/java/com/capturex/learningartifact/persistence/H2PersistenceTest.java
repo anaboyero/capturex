@@ -38,7 +38,7 @@ class H2PersistenceTest {
         assertNotNull(saved);
         assertNotNull(saved.getId());
         assertEquals("Learn persistence", saved.getDescription());
-        assertEquals("H2 file database stores data permanently", saved.getInsight());
+        assertEquals("H2 file database stores data permanently", saved.getLessonLearned());
         assertEquals("https://example.com/h2-guide", saved.getProjectUrl());
 
         // Verify it can be retrieved

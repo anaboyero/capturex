@@ -23,7 +23,7 @@ import static org.mockito.Mockito.doThrow;
 @DisplayName("Controller Unit Tests")
 class CreateLearningArtifactControllerTest {
     
-    private Controller controller;
+    private LearningArtifactController controller;
     
     @Mock
     private CreateLearningArtifactServiceInterface service;
@@ -31,7 +31,7 @@ class CreateLearningArtifactControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        controller = new Controller(service);
+        controller = new LearningArtifactController(service);
     }
     
     @Test
@@ -39,13 +39,13 @@ class CreateLearningArtifactControllerTest {
     void shouldReturn201CreatedWhenArtifactIsCreated() {
         // Arrange
         String description = "Test description";
-        String insight = "Test insight";
+        String lessonLearned = "Test lessonLearned";
         String projectUrl = "https://example.com";
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            description, insight, projectUrl
+            description, lessonLearned, projectUrl
         );
         
-        LearningArtifact expectedArtifact = new LearningArtifact(description, insight, projectUrl);
+        LearningArtifact expectedArtifact = new LearningArtifact(description, lessonLearned, projectUrl);
         when(service.create(any(CreateLearningArtifactRequest.class)))
             .thenReturn(expectedArtifact);
         
@@ -58,7 +58,7 @@ class CreateLearningArtifactControllerTest {
         assertInstanceOf(LearningArtifact.class, result.getBody());
         LearningArtifact body = (LearningArtifact) result.getBody();
         assertEquals(description, body.getDescription());
-        assertEquals(insight, body.getInsight());
+        assertEquals(lessonLearned, body.getLessonLearned());
         assertEquals(projectUrl, body.getProjectUrl());
         verify(service).create(request);
     }
@@ -85,7 +85,7 @@ class CreateLearningArtifactControllerTest {
         assertInstanceOf(LearningArtifact.class, result.getBody());
         LearningArtifact body = (LearningArtifact) result.getBody();
         assertEquals("Learning async patterns", body.getDescription());
-        assertEquals("Async/await simplifies code", body.getInsight());
+        assertEquals("Async/await simplifies code", body.getLessonLearned());
         assertEquals("https://github.com/example", body.getProjectUrl());
     }
     
@@ -94,10 +94,10 @@ class CreateLearningArtifactControllerTest {
     void shouldDelegateToServiceWhenCreating() {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "Test", "Insight", "https://test.com"
+            "Test", "LessonLearned", "https://test.com"
         );
         
-        LearningArtifact artifact = new LearningArtifact("Test", "Insight", "https://test.com");
+        LearningArtifact artifact = new LearningArtifact("Test", "LessonLearned", "https://test.com");
         when(service.create(request)).thenReturn(artifact);
         
         // Act
@@ -112,7 +112,7 @@ class CreateLearningArtifactControllerTest {
     void shouldThrowValidationException() {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "", "Insight", "https://test.com"
+            "", "LessonLearned", "https://test.com"
         );
         
         when(service.create(request))
@@ -127,7 +127,7 @@ class CreateLearningArtifactControllerTest {
     void shouldThrowNullFieldException() {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            null, "Insight", "https://test.com"
+            null, "LessonLearned", "https://test.com"
         );
 
         when(service.create(request))
@@ -142,7 +142,7 @@ class CreateLearningArtifactControllerTest {
     void shouldThrowRuntimeException() {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "Test", "Insight", "https://test.com"
+            "Test", "LessonLearned", "https://test.com"
         );
         
         when(service.create(request))

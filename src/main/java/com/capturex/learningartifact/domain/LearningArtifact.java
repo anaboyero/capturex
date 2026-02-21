@@ -12,23 +12,23 @@ public class LearningArtifact {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
-    private String insight;
+    private String lessonLearned;
     private String projectUrl;
 
     protected LearningArtifact() {
         // JPA requires a no-arg constructor
     }
 
-    public LearningArtifact(Long id, String description, String insight, String projectUrl) {
+    public LearningArtifact(Long id, String description, String lessonLearned, String projectUrl) {
         this.id = id;
         this.description = description;
-        this.insight = insight;
+        this.lessonLearned = lessonLearned;
         this.projectUrl = projectUrl;
     }
 
-    public LearningArtifact(String description, String insight, String projectUrl) {
+    public LearningArtifact(String description, String lessonLearned, String projectUrl) {
         this.description = description;
-        this.insight = insight;
+        this.lessonLearned = lessonLearned;
         this.projectUrl = projectUrl;
     }
 
@@ -40,8 +40,8 @@ public class LearningArtifact {
         return description;
     }
 
-    public String getInsight() {
-        return insight;
+    public String getLessonLearned() {
+        return lessonLearned;
     }
 
     public String getProjectUrl() {
@@ -55,13 +55,13 @@ public class LearningArtifact {
         LearningArtifact that = (LearningArtifact) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(description, that.description) &&
-                Objects.equals(insight, that.insight) &&
+                Objects.equals(lessonLearned, that.lessonLearned) &&
                 Objects.equals(projectUrl, that.projectUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, insight, projectUrl);
+        return Objects.hash(id, description, lessonLearned, projectUrl);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class LearningArtifact {
         return "LearningArtifact{" +
                 "id='" + id + '\'' +
                 ", description='" + description + '\'' +
-                ", insight='" + insight + '\'' +
+                ", lessonLearned='" + lessonLearned + '\'' +
                 ", projectUrl='" + projectUrl + '\'' +
                 '}';
     }

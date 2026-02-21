@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class Controller {
+public class LearningArtifactController {
     
     private final CreateLearningArtifactServiceInterface service;
     
-    public Controller(CreateLearningArtifactServiceInterface service) {
+    public LearningArtifactController(CreateLearningArtifactServiceInterface service) {
         this.service = service;
     }
     

@@ -21,12 +21,12 @@ class LearningArtifactRepositoryTest {
     void should_persist_learning_artifact() {
         // Arrange
         String description = "Integration test artifact";
-        String insight = "Learned about JPA persistence";
+        String lessonLearned = "Learned about JPA persistence";
         String projectUrl = "https://example.com/test";
 
         LearningArtifact artifact = new LearningArtifact(
                 description,
-                insight,
+                lessonLearned,
                 projectUrl
         );
 
@@ -44,7 +44,7 @@ class LearningArtifactRepositoryTest {
 
         LearningArtifact foundArtifact = retrievedArtifact.get();
         assertEquals(description, foundArtifact.getDescription(), "Description should match");
-        assertEquals(insight, foundArtifact.getInsight(), "Insight should match");
+        assertEquals(lessonLearned, foundArtifact.getLessonLearned(), "LessonLearned should match");
         assertEquals(projectUrl, foundArtifact.getProjectUrl(), "ProjectUrl should match");
         assertEquals(savedArtifact.getId(), foundArtifact.getId(), "Id should match");
     }

@@ -30,8 +30,8 @@ public class CreateLearningArtifactService implements CreateLearningArtifactServ
             throw new NullFieldException("description");
         }
 
-        if (request.getInsight() == null) {
-            throw new NullFieldException("insight");
+        if (request.getLessonLearned() == null) {
+            throw new NullFieldException("lessonLearned");
         }
 
         if (request.getProjectUrl() == null) {
@@ -42,7 +42,7 @@ public class CreateLearningArtifactService implements CreateLearningArtifactServ
             throw new TooShortDescriptionException();
         }
 
-        if (request.getInsight().isBlank()) {
+        if (request.getLessonLearned().isBlank()) {
             throw new EmptyLessonLearnedException();
         }
 
@@ -52,7 +52,7 @@ public class CreateLearningArtifactService implements CreateLearningArtifactServ
 
         LearningArtifact artifact = new LearningArtifact(
                 request.getDescription(),
-                request.getInsight(),
+                request.getLessonLearned(),
                 request.getProjectUrl()
         );
         return repository.save(artifact);
