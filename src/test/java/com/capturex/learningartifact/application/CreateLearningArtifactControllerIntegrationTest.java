@@ -100,18 +100,52 @@ class CreateLearningArtifactControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("should return 400 Bad Request automatically when request has null fields")
-    void shouldReturn400AutomaticallyWhenRequestHasNullFields() throws Exception {
+    @DisplayName("should return 400 with explicit message when description is null")
+    void shouldReturn400WithExplicitMessageWhenDescriptionIsNull() throws Exception {
         // Arrange
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            null, "LessonLearned", VALID_URL
+            null, VALID_LESSON_LEARNED, VALID_URL
         );
 
         // Act & Assert
         postCreate(request)
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")))
-            .andExpect(jsonPath("$.message").isString());
+            .andExpect(jsonPath("$.message", equalTo("description cannot be null")));
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @DisplayName("should return 400 with explicit message when lessonLearned is null")
+    void shouldReturn400WithExplicitMessageWhenLessonLearnedIsNull() throws Exception {
+        // Arrange
+        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
+            VALID_DESCRIPTION, null, VALID_URL
+        );
+
+        // Act & Assert
+        postCreate(request)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")))
+            .andExpect(jsonPath("$.message", equalTo("lessonLearned cannot be null")));
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @DisplayName("should return 400 with explicit message when projectUrl is null")
+    void shouldReturn400WithExplicitMessageWhenProjectUrlIsNull() throws Exception {
+        // Arrange
+        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
+            VALID_DESCRIPTION, VALID_LESSON_LEARNED, null
+        );
+
+        // Act & Assert
+        postCreate(request)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")))
+            .andExpect(jsonPath("$.message", equalTo("projectUrl cannot be null")));
 
         verifyNoInteractions(service);
     }

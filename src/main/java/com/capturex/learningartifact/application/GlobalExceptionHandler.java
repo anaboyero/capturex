@@ -34,7 +34,9 @@ public class GlobalExceptionHandler {
                 .getFieldErrors()
                 .stream()
                 .findFirst()
-                .map(error -> error.getDefaultMessage())
+                .map(error -> error.getRejectedValue() == null
+                        ? error.getField() + " cannot be null"
+                        : error.getDefaultMessage())
                 .orElse("Request validation failed");
 
         ErrorResponse response = new ErrorResponse("INVALID_REQUEST", message);
