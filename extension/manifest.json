@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Capturex",
+  "description": "Create Learning Artifacts from any webpage",
+  "version": "1.0",
+
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

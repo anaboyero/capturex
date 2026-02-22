@@ -1,58 +1,7 @@
-Tu extensión debe permitir:
+Resumen del objetivo: quiero crear una extensión de navegador web que, cuando se pulse desde una url, haga saltar un formulario con los campos de LearningArtifact (incluyendo de manera automática la url en el campo projectUrl). Cuando el formulario se rellene, se llamará a la api para crear un objeto LearningArtifact.
 
-Desde cualquier página web:
-
-👉 Pulsar botón de la extensión
-👉 Capturar automáticamente la URL actual
-👉 Pedir al usuario:
-
-    description
-    lessonLearned
-
-👉 Llamar a tu API
-👉 Crear un LearningArtifact
-
-Traducción técnica
-
-Necesitas integrar:
-
-Browser
-   ↓
-Browser Extension
-   ↓
-Formulario mínimo
-   ↓
-HTTP request
-   ↓
-Tu API backend
-⚠️ Regla clave (MUY importante)
-
-Una slice vertical debe atravesar TODO el sistema.
-
-No hacemos:
-
-primero todo frontend ❌
-
-luego integración ❌
-
-Hacemos:
-
-✅ algo pequeño
-✅ usable
-✅ end-to-end
-
-desde el principio.
-
-🎯 Objetivo final (definición de DONE)
-
-Usuario puede:
-
-✅ abrir cualquier web
-✅ pulsar extensión
-✅ introducir texto
-✅ crear LearningArtifact real
-
-🧱 2. Arquitectura mínima de una extensión
+---- 
+2. Arquitectura mínima de una extensión
 
 Una extensión moderna tiene normalmente:
 
@@ -66,17 +15,6 @@ Para MVP:
 
 👉 NO necesitamos background script aún.
 
-Frontend mínimo posible.
-
-✅ 3. Vertical slices necesarias
-
-Voy a optimizar para:
-
-aprendizaje progresivo
-
-mínimo frontend
-
-feedback rápido
 
 🥇 SLICE 1 — Extensión visible
 Objetivo
