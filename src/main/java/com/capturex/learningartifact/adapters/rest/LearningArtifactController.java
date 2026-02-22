@@ -1,5 +1,6 @@
-package com.capturex.learningartifact.application;
+package com.capturex.learningartifact.adapters.rest;
 
+import com.capturex.learningartifact.application.LearningArtifactUseCase;
 import com.capturex.learningartifact.domain.LearningArtifact;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,9 @@ import java.util.List;
 @RestController
 public class LearningArtifactController {
     
-    private final CreateLearningArtifactServiceInterface service;
+    private final LearningArtifactUseCase service;
     
-    public LearningArtifactController(CreateLearningArtifactServiceInterface service) {
+    public LearningArtifactController(LearningArtifactUseCase service) {
         this.service = service;
     }
     

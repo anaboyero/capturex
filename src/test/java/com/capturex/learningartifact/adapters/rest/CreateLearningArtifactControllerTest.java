@@ -1,5 +1,6 @@
-package com.capturex.learningartifact.application;
+package com.capturex.learningartifact.adapters.rest;
 
+import com.capturex.learningartifact.application.LearningArtifactUseCase;
 import com.capturex.learningartifact.domain.LearningArtifact;
 import com.capturex.learningartifact.domain.exceptions.LearningArtifactNotFoundException;
 import com.capturex.learningartifact.domain.exceptions.NullFieldException;
@@ -26,7 +27,7 @@ class CreateLearningArtifactControllerTest {
     private LearningArtifactController controller;
     
     @Mock
-    private CreateLearningArtifactServiceInterface service;
+    private LearningArtifactUseCase service;
     
     @BeforeEach
     void setUp() {

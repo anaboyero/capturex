@@ -1,5 +1,6 @@
 package com.capturex.learningartifact.application;
 
+import com.capturex.learningartifact.adapters.rest.CreateLearningArtifactRequest;
 import com.capturex.learningartifact.domain.LearningArtifact;
 import com.capturex.learningartifact.domain.LearningArtifactRepository;
 import com.capturex.learningartifact.domain.exceptions.LearningArtifactNotFoundException;
@@ -8,10 +9,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CreateLearningArtifactService implements CreateLearningArtifactServiceInterface {
+public class LearningArtifactService implements LearningArtifactUseCase {
     private final LearningArtifactRepository repository;
 
-    public CreateLearningArtifactService(LearningArtifactRepository repository) {
+    public LearningArtifactService(LearningArtifactRepository repository) {
         this.repository = repository;
     }
 

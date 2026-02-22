@@ -1,4 +1,4 @@
-package com.capturex.learningartifact.application;
+package com.capturex.learningartifact.adapters.rest;
 
 public enum ErrorResponseCode {
     INVALID_REQUEST,

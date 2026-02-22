@@ -1,5 +1,6 @@
-package com.capturex.learningartifact.application;
+package com.capturex.learningartifact.adapters.rest;
 
+import com.capturex.learningartifact.application.LearningArtifactUseCase;
 import com.capturex.learningartifact.domain.LearningArtifact;
 import com.capturex.learningartifact.domain.exceptions.LearningArtifactNotFoundException;
 import com.capturex.learningartifact.domain.exceptions.TooShortDescriptionException;
@@ -45,7 +46,7 @@ class CreateLearningArtifactControllerIntegrationTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private CreateLearningArtifactServiceInterface service;
+    private LearningArtifactUseCase service;
 
     @Test
     @DisplayName("should return 201 Created when creating a learning artifact")
@@ -95,6 +96,25 @@ class CreateLearningArtifactControllerIntegrationTest {
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")))
             .andExpect(jsonPath("$.message").isString());
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @DisplayName("should return 400 when description reaches min length only with surrounding spaces")
+    void shouldReturn400WhenDescriptionIsTooShortAfterTrim() throws Exception {
+        // Arrange
+        CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
+            "                       Basic controller                          ",
+            VALID_LESSON_LEARNED,
+            "https://my-personal-github.com"
+        );
+
+        // Act & Assert
+        postCreate(request)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")))
+            .andExpect(jsonPath("$.message", equalTo("description must be between 30 and 500 characters")));
 
         verifyNoInteractions(service);
     }

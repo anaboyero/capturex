@@ -1,9 +1,10 @@
 package com.capturex.learningartifact.application;
 
+import com.capturex.learningartifact.adapters.rest.CreateLearningArtifactRequest;
 import com.capturex.learningartifact.domain.LearningArtifact;
 import java.util.List;
 
-public interface CreateLearningArtifactServiceInterface {
+public interface LearningArtifactUseCase {
     LearningArtifact create(CreateLearningArtifactRequest request);
     List<LearningArtifact> getAll();
     void delete(Long id);

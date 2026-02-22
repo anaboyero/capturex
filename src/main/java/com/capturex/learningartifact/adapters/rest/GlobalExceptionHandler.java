@@ -1,4 +1,4 @@
-package com.capturex.learningartifact.application;
+package com.capturex.learningartifact.adapters.rest;
 
 import com.capturex.learningartifact.domain.exceptions.CapturexException;
 import com.capturex.learningartifact.domain.exceptions.ErrorCode;

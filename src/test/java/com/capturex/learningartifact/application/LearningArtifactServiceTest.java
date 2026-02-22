@@ -1,5 +1,6 @@
 package com.capturex.learningartifact.application;
 
+import com.capturex.learningartifact.adapters.rest.CreateLearningArtifactRequest;
 import com.capturex.learningartifact.domain.LearningArtifact;
 import com.capturex.learningartifact.domain.LearningArtifactRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -14,14 +15,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("CreateLearningArtifactService Tests")
-class CreateLearningArtifactServiceTest {
+@DisplayName("LearningArtifactService Tests")
+class LearningArtifactServiceTest {
 
     @Mock
     private LearningArtifactRepository repository;
 
     @InjectMocks
-    private CreateLearningArtifactService service;
+    private LearningArtifactService service;
 
     @Test
     @DisplayName("should_create_learning_artifact_when_data_is_valid")
