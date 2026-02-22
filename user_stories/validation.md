@@ -78,34 +78,3 @@ error HTTP automático
 tests de validación
 
 Fundamentos puros.
-
-
------  Reglas de formato (DTO) ----- 
-
-description:
-  - no blank
-  - min 30 chars
-  - max 500
-
-lessonLearned:
-  - no blank
-  - min 10 chars
-
-repoUrl:
-  - no blank
-  - URL válida
-
-
------ Reglas de Dominio ----- 
-
-repoUrl:
-  - debe ser única
-
-description:
-  - no puede existir otra igual
-
-repoUrl:
-  - debe ser github o gitlab
-
-
------   Casos de error que debes cubrir ----- 
