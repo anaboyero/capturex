@@ -1,0 +1,242 @@
+Tu extensión debe permitir:
+
+Desde cualquier página web:
+
+👉 Pulsar botón de la extensión
+👉 Capturar automáticamente la URL actual
+👉 Pedir al usuario:
+
+    description
+    lessonLearned
+
+👉 Llamar a tu API
+👉 Crear un LearningArtifact
+
+Traducción técnica
+
+Necesitas integrar:
+
+Browser
+   ↓
+Browser Extension
+   ↓
+Formulario mínimo
+   ↓
+HTTP request
+   ↓
+Tu API backend
+⚠️ Regla clave (MUY importante)
+
+Una slice vertical debe atravesar TODO el sistema.
+
+No hacemos:
+
+primero todo frontend ❌
+
+luego integración ❌
+
+Hacemos:
+
+✅ algo pequeño
+✅ usable
+✅ end-to-end
+
+desde el principio.
+
+🎯 Objetivo final (definición de DONE)
+
+Usuario puede:
+
+✅ abrir cualquier web
+✅ pulsar extensión
+✅ introducir texto
+✅ crear LearningArtifact real
+
+🧱 2. Arquitectura mínima de una extensión
+
+Una extensión moderna tiene normalmente:
+
+extension/
+ ├── manifest.json
+ ├── popup.html
+ ├── popup.js
+ └── background.js (opcional)
+
+Para MVP:
+
+👉 NO necesitamos background script aún.
+
+Frontend mínimo posible.
+
+✅ 3. Vertical slices necesarias
+
+Voy a optimizar para:
+
+aprendizaje progresivo
+
+mínimo frontend
+
+feedback rápido
+
+🥇 SLICE 1 — Extensión visible
+Objetivo
+
+Ver algo al pulsar el icono.
+
+Incluye
+
+✅ manifest
+✅ popup vacío
+✅ botón visible
+
+Resultado usuario
+
+Pulsa icono → aparece popup.
+
+👉 Sin API
+👉 Sin lógica
+👉 Solo existencia
+
+Primer win psicológico.
+
+🥈 SLICE 2 — Obtener URL actual ⭐
+
+Ahora la extensión puede leer la página.
+
+Nueva capacidad
+Browser → Extension → current tab URL
+Incluye
+
+✅ permisos de tabs
+✅ JS para leer URL
+✅ mostrar URL en popup
+
+Resultado
+
+Pulsa extensión → ve:
+
+Project URL:
+https://github.com/...
+
+Ya estamos integrando navegador real.
+
+🥉 SLICE 3 — Formulario mínimo
+
+Ahora añadimos SOLO lo necesario:
+
+Campos:
+
+description
+lessonLearned
+
+Nada de diseño.
+
+Literalmente:
+
+<textarea>
+
+Resultado:
+
+✅ usuario puede escribir datos.
+
+🏅 SLICE 4 — Llamar a tu API (END-TO-END 🔥)
+
+Aquí ocurre la magia.
+
+Cuando pulsa:
+
+Create Artifact
+
+La extensión hace:
+
+POST /learning-artifacts
+
+con:
+
+{
+  "projectUrl": currentTabUrl,
+  "description": "...",
+  "lessonLearned": "..."
+}
+
+Resultado:
+
+✅ artifact real creado
+✅ sistema completo funcionando
+
+👉 MVP COMPLETO.
+
+🏆 SLICE 5 — Feedback básico usuario
+
+Añadimos SOLO:
+
+✅ mensaje éxito/error
+
+✅ Artifact created
+
+o
+
+❌ Error
+
+Nada más.
+
+✨ SLICE 6 — Calidad mínima (opcional)
+
+Pequeñas mejoras:
+
+limpiar formulario
+
+desactivar botón mientras envía
+
+validación básica
+
+Pero esto ya es mejora, no funcionalidad core.
+
+📊 Resumen visual
+Slice 1 → Popup visible
+Slice 2 → Leer URL actual
+Slice 3 → Formulario mínimo
+Slice 4 → Llamada API ✅ MVP
+Slice 5 → Feedback usuario
+Slice 6 → Refinamiento
+
+👉 4 slices ya entregan valor real.
+
+🧠 Insight arquitectónico importante
+
+Observa algo:
+
+No hemos hablado de:
+
+React
+
+frameworks
+
+diseño UI
+
+routing
+
+estado complejo
+
+Porque:
+
+Una extensión funcional NO necesita framework.
+
+Muchos equipos sobre-ingenierizan aquí.
+
+Tu objetivo correcto es:
+
+✅ JS plano
+✅ HTML mínimo
+✅ integración primero
+
+⭐ Recomendación profesional
+
+Haz commits así:
+
+feat(extension): basic popup
+feat(extension): read current tab url
+feat(extension): artifact form
+feat(extension): create artifact via api
+
+Esto queda muy bien profesionalmente.
