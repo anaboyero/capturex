@@ -11,22 +11,30 @@ import java.util.List;
 @Service
 public class LearningArtifactService implements LearningArtifactUseCase {
     private final LearningArtifactRepository repository;
+    private final DescriptionProposalService descriptionProposalService;
 
-    public LearningArtifactService(LearningArtifactRepository repository) {
+    public LearningArtifactService(
+            LearningArtifactRepository repository,
+            DescriptionProposalService descriptionProposalService
+    ) {
         this.repository = repository;
+        this.descriptionProposalService = descriptionProposalService;
     }
 
     public LearningArtifact create(CreateLearningArtifactRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("Request cannot be null");
         }
-
         LearningArtifact artifact = new LearningArtifact(
                 request.getDescription(),
                 request.getLessonLearned(),
                 request.getProjectUrl()
         );
         return repository.save(artifact);
+    }
+
+    public ArtifactProposal suggest(String projectUrl) {
+        return descriptionProposalService.suggest(projectUrl);
     }
 
     public List<LearningArtifact> getAll() {

@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class CreateLearningArtifactRequest {
     @NotBlank(message = "description must not be blank")
-    @Size(min = 30, max = 500, message = "description must be between 30 and 500 characters")
+    @Size(max = 500, message = "description must be at most 500 characters")
     private String description;
 
     @NotBlank(message = "lessonLearned must not be blank")

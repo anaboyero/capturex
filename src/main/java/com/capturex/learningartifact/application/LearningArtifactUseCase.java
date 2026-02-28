@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface LearningArtifactUseCase {
     LearningArtifact create(CreateLearningArtifactRequest request);
+    ArtifactProposal suggest(String projectUrl);
     List<LearningArtifact> getAll();
     void delete(Long id);
 }

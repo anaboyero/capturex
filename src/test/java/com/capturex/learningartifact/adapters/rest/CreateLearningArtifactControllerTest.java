@@ -1,6 +1,7 @@
 package com.capturex.learningartifact.adapters.rest;
 
 import com.capturex.learningartifact.application.LearningArtifactUseCase;
+import com.capturex.learningartifact.application.ArtifactProposal;
 import com.capturex.learningartifact.domain.LearningArtifact;
 import com.capturex.learningartifact.domain.exceptions.LearningArtifactNotFoundException;
 import com.capturex.learningartifact.domain.exceptions.NullFieldException;
@@ -121,6 +122,25 @@ class CreateLearningArtifactControllerTest {
         
         // Act & Assert
         assertThrows(TooShortDescriptionException.class, () -> controller.create(request));
+    }
+
+    @Test
+    @DisplayName("should return proposal when suggestion endpoint is called")
+    void shouldReturnProposalWhenSuggestionEndpointIsCalled() {
+        ArtifactProposalRequest request = new ArtifactProposalRequest("https://github.com/owner/repo");
+        ArtifactProposal proposal = new ArtifactProposal(
+                "https://github.com/owner/repo",
+                "A practical repository for learning API integration patterns."
+        );
+
+        when(service.suggest(request.getProjectUrl())).thenReturn(proposal);
+
+        ResponseEntity<ArtifactProposal> result = controller.suggest(request);
+
+        assertNotNull(result);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(proposal, result.getBody());
+        verify(service).suggest(request.getProjectUrl());
     }
 
     @Test

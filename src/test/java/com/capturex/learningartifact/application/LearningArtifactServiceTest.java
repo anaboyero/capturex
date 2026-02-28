@@ -21,6 +21,9 @@ class LearningArtifactServiceTest {
     @Mock
     private LearningArtifactRepository repository;
 
+    @Mock
+    private DescriptionProposalService descriptionProposalService;
+
     @InjectMocks
     private LearningArtifactService service;
 
@@ -54,6 +57,7 @@ class LearningArtifactServiceTest {
         // Assert
         // Verify repository.save was called once
         verify(repository, times(1)).save(any(LearningArtifact.class));
+        verifyNoInteractions(descriptionProposalService);
 
         // Verify fields are copied correctly
         assertNotNull(result, "Result should not be null");
@@ -83,11 +87,11 @@ class LearningArtifactServiceTest {
         );
 
         when(repository.save(any(LearningArtifact.class))).thenReturn(savedArtifact);
-
         // Act & Assert
         LearningArtifact result = service.create(request);
         assertNotNull(result);
         verify(repository, times(1)).save(any(LearningArtifact.class));
+        verifyNoInteractions(descriptionProposalService);
     }
 
     @Test

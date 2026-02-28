@@ -1,6 +1,7 @@
 package com.capturex.learningartifact.adapters.rest;
 
 import com.capturex.learningartifact.application.LearningArtifactUseCase;
+import com.capturex.learningartifact.application.ArtifactProposal;
 import com.capturex.learningartifact.domain.LearningArtifact;
 import com.capturex.learningartifact.domain.exceptions.LearningArtifactNotFoundException;
 import com.capturex.learningartifact.domain.exceptions.TooShortDescriptionException;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("CreateLearningArtifactControllerIntegration")
 class CreateLearningArtifactControllerIntegrationTest {
     private static final String ENDPOINT = "/learning-artifacts";
+    private static final String PROPOSAL_ENDPOINT = "/learning-artifacts/proposal";
     private static final String VALID_DESCRIPTION =
             "Basic controller that registers a learning artifact from a developer";
     private static final String VALID_LESSON_LEARNED =
@@ -101,11 +103,12 @@ class CreateLearningArtifactControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("should return 400 when description reaches min length only with surrounding spaces")
-    void shouldReturn400WhenDescriptionIsTooShortAfterTrim() throws Exception {
+    @DisplayName("should return 400 when description exceeds max length")
+    void shouldReturn400WhenDescriptionExceedsMaxLength() throws Exception {
         // Arrange
+        String tooLongDescription = "a".repeat(501);
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
-            "                       Basic controller                          ",
+            tooLongDescription,
             VALID_LESSON_LEARNED,
             "https://my-personal-github.com"
         );
@@ -114,7 +117,7 @@ class CreateLearningArtifactControllerIntegrationTest {
         postCreate(request)
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")))
-            .andExpect(jsonPath("$.message", equalTo("description must be between 30 and 500 characters")));
+            .andExpect(jsonPath("$.message", equalTo("description must be at most 500 characters")));
 
         verifyNoInteractions(service);
     }
@@ -305,6 +308,26 @@ class CreateLearningArtifactControllerIntegrationTest {
             delete(ENDPOINT + "/{id}", id)
         )
             .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("should return 200 with proposal for suggestion endpoint")
+    void shouldReturn200WithProposalForSuggestionEndpoint() throws Exception {
+        ArtifactProposalRequest request = new ArtifactProposalRequest("https://github.com/owner/repo");
+        ArtifactProposal proposal = new ArtifactProposal(
+                "https://github.com/owner/repo",
+                "A concise description generated from repository README."
+        );
+        when(service.suggest(any(String.class))).thenReturn(proposal);
+
+        mockMvc.perform(
+                post(PROPOSAL_ENDPOINT)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.projectUrl", equalTo("https://github.com/owner/repo")))
+                .andExpect(jsonPath("$.description", equalTo("A concise description generated from repository README.")));
     }
 
     private CreateLearningArtifactRequest validRequest(String projectUrl) {
