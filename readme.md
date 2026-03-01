@@ -47,6 +47,25 @@ mvn spring-boot:run
 
 Server runs on `http://localhost:8080`
 
+### Run with Docker
+```bash
+docker compose up --build
+```
+
+Server runs on `http://localhost:8080`
+
+Useful commands:
+```bash
+# Run in background
+docker compose up --build -d
+
+# Stop containers
+docker compose down
+
+# Stop and remove persisted H2 data volume
+docker compose down -v
+```
+
 ## API Usage
 
 ### Create Learning Artifact
