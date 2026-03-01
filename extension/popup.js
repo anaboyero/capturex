@@ -2,6 +2,13 @@ const API_BASE_URL = "http://localhost:8080";
 const GITHUB_BASE_REPO_REGEX = /^https:\/\/github\.com\/[^/]+\/[^/]+$/;
 
 let currentUrl = "";
+
+function setStatus(message, kind = "") {
+  const statusEl = document.getElementById("status");
+  statusEl.textContent = message;
+  statusEl.className = kind ? kind : "";
+}
+
 async function requestProposal(projectUrl) {
   const response = await fetch(`${API_BASE_URL}/learning-artifacts/proposal`, {
     method: "POST",
@@ -25,7 +32,23 @@ async function createArtifact(projectUrl, description, lessonLearned) {
   });
 
   if (!response.ok) {
-    throw new Error("Artifact could not be created");
+    let errorMessage = "Artifact could not be created";
+    try {
+      const body = await response.json();
+      if (body && body.message) {
+        errorMessage = body.message;
+      }
+    } catch (_ignored) {
+      // Keep generic error message when API does not return JSON.
+    }
+    throw new Error(errorMessage);
+  }
+
+  try {
+    const artifact = await response.json();
+    return artifact && artifact.id != null ? artifact.id : null;
+  } catch (_ignored) {
+    return null;
   }
 }
 
@@ -50,24 +73,43 @@ chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
 });
 
 document.getElementById("createBtn").addEventListener("click", async () => {
+  const createBtn = document.getElementById("createBtn");
+  const defaultButtonLabel = "Create Artifact";
   const projectUrl = document.getElementById("url").value.trim();
-  const description = document.getElementById("description").value;
-  const lessonLearned = document.getElementById("lessonLearned").value;
+  const description = document.getElementById("description").value.trim();
+  const lessonLearned = document.getElementById("lessonLearned").value.trim();
+
+  setStatus("Validating fields...", "info");
 
   if (!projectUrl) {
-    console.error("Project URL is required to create a learning artifact");
+    setStatus("Project URL is required.", "error");
     return;
   }
 
-  if (!description || !description.trim()) {
-    console.error("Description is required to create a learning artifact");
+  if (!description) {
+    setStatus("Description is required.", "error");
+    return;
+  }
+
+  if (!lessonLearned) {
+    setStatus("Lesson Learned is required.", "error");
     return;
   }
 
   try {
-    await createArtifact(projectUrl, description, lessonLearned);
-    console.log("Artifact created");
+    createBtn.disabled = true;
+    createBtn.textContent = "Creating...";
+    setStatus("Creating artifact...", "info");
+    const artifactId = await createArtifact(projectUrl, description, lessonLearned);
+    if (artifactId != null) {
+      setStatus(`Learning Artifact created successfully. ID: ${artifactId}`, "success");
+    } else {
+      setStatus("Learning Artifact created successfully.", "success");
+    }
   } catch (error) {
-    console.error(error.message);
+    setStatus(error.message, "error");
+  } finally {
+    createBtn.disabled = false;
+    createBtn.textContent = defaultButtonLabel;
   }
 });
