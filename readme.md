@@ -6,7 +6,7 @@ A minimal, testable backend API for capturing and managing learning artifacts bu
 
 Capturex is a Spring Boot application that allows users to create and store "Learning Artifacts" - records of things you've learned with project context. Each artifact captures:
 - **Description**: What you learned
-- **Insight**: Key takeaway or lesson  
+- **Lesson Learned**: Key takeaway or lesson
 - **Project URL**: Link to the project where you learned it
 
 ## Architecture
@@ -15,16 +15,16 @@ This project follows a **Vertical Slice Architecture**, organizing code by featu
 
 ## Technology Stack
 
-- Java 11+ with Spring Boot 3.2.2
+- Java 17+ with Spring Boot 3.2.2
 - Spring Web for REST endpoints
 - Spring Data JPA with Hibernate
-- H2 in-memory database
+- H2 file-based database
 - JUnit 5 & Mockito for testing
 - Maven build tool
 
 ## Prerequisites
 
-- Java 11 or higher with `javac` on PATH
+- Java 17 or higher with `javac` on PATH
 - Maven 3.6+
 
 ## Running the Application
@@ -34,11 +34,7 @@ This project follows a **Vertical Slice Architecture**, organizing code by featu
 mvn clean test
 ```
 
-Runs 15 tests:
-- 5 controller unit tests
-- 6 HTTP integration tests  
-- 3 service unit tests
-- 1 repository test
+Runs the automated test suite (unit and integration tests).
 
 ### Start Server
 ```bash
@@ -76,36 +72,76 @@ docker compose down -v
 ```json
 {
   "description": "Learned about async/await",
-  "insight": "Simplifies callback code",
-  "projectUrl": "https://github.com/example"
+  "lessonLearned": "Simplifies callback code",
+  "projectUrl": "https://github.com/example/repo"
 }
 ```
 
 **Response:** 201 Created
 ```json
 {
+  "id": 1,
   "description": "Learned about async/await",
-  "insight": "Simplifies callback code",
-  "projectUrl": "https://github.com/example"
+  "lessonLearned": "Simplifies callback code",
+  "projectUrl": "https://github.com/example/repo"
 }
 ```
 
 **Errors:**
-- 400: Missing or blank description
+- 400: Validation error (blank fields, invalid URL, etc.)
+- 404: Artifact not found (for delete)
 - 500: Unexpected server error
+
+### Get All Learning Artifacts
+
+**GET** `/learning-artifacts`
+
+**Response:** 200 OK
+```json
+[
+  {
+    "id": 1,
+    "description": "Learned about async/await",
+    "lessonLearned": "Simplifies callback code",
+    "projectUrl": "https://github.com/example/repo"
+  }
+]
+```
+
+### Delete Learning Artifact
+
+**DELETE** `/learning-artifacts/{id}`
+
+**Response:** 204 No Content
+
+### Generate Description Proposal
+
+**POST** `/learning-artifacts/proposal`
+
+**Request:**
+```json
+{
+  "projectUrl": "https://github.com/example/repo"
+}
+```
+
+**Response:** 200 OK
+```json
+{
+  "description": "Short project summary proposal..."
+}
+```
 
 ## Project Structure
 
 ```
 src/main/java/com/capturex/learningartifact/
+├── adapters/
+│   ├── github/
+│   └── rest/
 ├── application/
-│   ├── Controller.java
-│   ├── CreateLearningArtifactRequest.java
-│   ├── CreateLearningArtifactService.java
-│   └── CreateLearningArtifactServiceInterface.java
 ├── domain/
-│   ├── LearningArtifact.java
-│   └── LearningArtifactRepository.java
+│   └── exceptions/
 └── infrastructure/
 ```
 
@@ -119,15 +155,14 @@ This project uses **Test-Driven Development (TDD)**:
 
 ## Database
 
-H2 in-memory database configured in `application.properties`:
-- Fresh database on each startup
-- No persistent data between runs
-- Ideal for development and testing
+H2 file-based database configured in `application.properties`:
+- URL: `jdbc:h2:file:./data/capturex;MODE=MySQL`
+- Data persists between runs in the local `data/` directory
+- Docker setup persists data using the `capturex-data` volume
 
 ## Future Features
 
-- GET endpoints to retrieve artifacts
-- PUT/DELETE for updates and deletion
+- PUT for updates
 - Search and filtering
 - Pagination
 - Authentication
