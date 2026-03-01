@@ -28,12 +28,12 @@ class GitHubDescriptionProposalServiceTest {
     }
 
     @Test
-    @DisplayName("should_return_empty_description_for_non_github_url")
-    void should_return_empty_description_for_non_github_url() {
+    @DisplayName("should_return_write_a_description_for_non_github_url")
+    void should_return_write_a_description_for_non_github_url() {
         ArtifactProposal proposal = service.suggest("https://example.com/repo");
 
         assertEquals("https://example.com/repo", proposal.getProjectUrl());
-        assertEquals("", proposal.getDescription());
+        assertEquals("Please, write a description for this project.", proposal.getDescription());
         verifyNoInteractions(gitHubReadmeClient);
     }
 
@@ -66,7 +66,7 @@ class GitHubDescriptionProposalServiceTest {
         ArtifactProposal proposal = service.suggest(projectUrl);
 
         assertEquals(projectUrl, proposal.getProjectUrl());
-        assertEquals("", proposal.getDescription());
+        assertEquals("Please, write a description for this project.", proposal.getDescription());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.capturex.learningartifact.domain;
 
 import java.util.Objects;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +12,10 @@ public class LearningArtifact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 1500)
     private String description;
+
     private String lessonLearned;
     private String projectUrl;
 

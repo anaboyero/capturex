@@ -106,7 +106,7 @@ class CreateLearningArtifactControllerIntegrationTest {
     @DisplayName("should return 400 when description exceeds max length")
     void shouldReturn400WhenDescriptionExceedsMaxLength() throws Exception {
         // Arrange
-        String tooLongDescription = "a".repeat(501);
+        String tooLongDescription = "a".repeat(1501);
         CreateLearningArtifactRequest request = new CreateLearningArtifactRequest(
             tooLongDescription,
             VALID_LESSON_LEARNED,
@@ -117,7 +117,7 @@ class CreateLearningArtifactControllerIntegrationTest {
         postCreate(request)
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code", equalTo("INVALID_REQUEST")))
-            .andExpect(jsonPath("$.message", equalTo("description must be at most 500 characters")));
+            .andExpect(jsonPath("$.message", equalTo("description must be at most 1500 characters")));
 
         verifyNoInteractions(service);
     }

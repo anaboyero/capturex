@@ -2,7 +2,6 @@ const API_BASE_URL = "http://localhost:8080";
 const GITHUB_BASE_REPO_REGEX = /^https:\/\/github\.com\/[^/]+\/[^/]+$/;
 
 let currentUrl = "";
-
 async function requestProposal(projectUrl) {
   const response = await fetch(`${API_BASE_URL}/learning-artifacts/proposal`, {
     method: "POST",
@@ -32,7 +31,10 @@ async function createArtifact(projectUrl, description, lessonLearned) {
 
 chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
   currentUrl = tabs[0].url;
-  document.getElementById("url").textContent = currentUrl;
+  const urlField = document.getElementById("url");
+  urlField.value = currentUrl;
+  const descriptionField = document.getElementById("description");
+  descriptionField.value = "";
 
   if (!GITHUB_BASE_REPO_REGEX.test(currentUrl)) {
     return;
@@ -40,15 +42,22 @@ chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
 
   try {
     const proposedDescription = await requestProposal(currentUrl);
-    document.getElementById("description").value = proposedDescription;
+    descriptionField.value = proposedDescription || "";
   } catch (error) {
     console.error("Could not request proposal", error);
+    descriptionField.value = "";
   }
 });
 
 document.getElementById("createBtn").addEventListener("click", async () => {
+  const projectUrl = document.getElementById("url").value.trim();
   const description = document.getElementById("description").value;
   const lessonLearned = document.getElementById("lessonLearned").value;
+
+  if (!projectUrl) {
+    console.error("Project URL is required to create a learning artifact");
+    return;
+  }
 
   if (!description || !description.trim()) {
     console.error("Description is required to create a learning artifact");
@@ -56,7 +65,7 @@ document.getElementById("createBtn").addEventListener("click", async () => {
   }
 
   try {
-    await createArtifact(currentUrl, description, lessonLearned);
+    await createArtifact(projectUrl, description, lessonLearned);
     console.log("Artifact created");
   } catch (error) {
     console.error(error.message);

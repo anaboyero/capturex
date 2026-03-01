@@ -10,6 +10,8 @@ public class GitHubDescriptionProposalService implements DescriptionProposalServ
     private static final Pattern GITHUB_REPO_URL_PATTERN =
             Pattern.compile("^https://github\\.com/([^/]+)/([^/]+)$");
     private static final int MAX_DESCRIPTION_CHARS = 500;
+    private final String nonDescription = "Please, write a description for this project.";
+
 
     private final GitHubReadmeClient gitHubReadmeClient;
     private final ReadmeSummarizer readmeSummarizer;
@@ -23,12 +25,12 @@ public class GitHubDescriptionProposalService implements DescriptionProposalServ
     public ArtifactProposal suggest(String projectUrl) {
         String normalizedProjectUrl = normalize(projectUrl);
         if (normalizedProjectUrl == null) {
-            return new ArtifactProposal("", "");
+            return new ArtifactProposal("", nonDescription);
         }
 
         Matcher matcher = GITHUB_REPO_URL_PATTERN.matcher(normalizedProjectUrl);
         if (!matcher.matches()) {
-            return new ArtifactProposal(normalizedProjectUrl, "");
+            return new ArtifactProposal(normalizedProjectUrl, nonDescription);
         }
 
         String owner = matcher.group(1);
@@ -39,7 +41,7 @@ public class GitHubDescriptionProposalService implements DescriptionProposalServ
             String description = readmeSummarizer.summarize(readme, MAX_DESCRIPTION_CHARS);
             return new ArtifactProposal(normalizedProjectUrl, description);
         } catch (RuntimeException exception) {
-            return new ArtifactProposal(normalizedProjectUrl, "");
+            return new ArtifactProposal(normalizedProjectUrl, nonDescription);
         }
     }
 

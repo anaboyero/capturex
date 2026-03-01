@@ -48,6 +48,23 @@ class H2PersistenceTest {
     }
 
     @Test
+    @DisplayName("should persist description with 1500 characters")
+    void shouldPersistDescriptionWith1500Characters() {
+        String longDescription = "a".repeat(1500);
+        LearningArtifact artifact = new LearningArtifact(
+            longDescription,
+            "Learned that database column length must match validation rules",
+            "https://example.com/large-description"
+        );
+
+        LearningArtifact saved = repository.save(artifact);
+        LearningArtifact retrieved = repository.findById(saved.getId()).orElseThrow();
+
+        assertEquals(1500, retrieved.getDescription().length());
+        assertEquals(longDescription, retrieved.getDescription());
+    }
+
+    @Test
     @DisplayName("should retrieve multiple persisted artifacts from H2 file")
     void shouldRetrieveMultipleArtifactsFromH2File() {
         // Arrange
